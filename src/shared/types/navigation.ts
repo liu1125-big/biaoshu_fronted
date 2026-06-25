@@ -2,7 +2,8 @@ export type SectionId =
   | 'bid-generation'
   | 'technical-plan'
   | 'existing-plan-expansion'
-  | 'export-format';
+  | 'knowledge-base'
+  | 'document-knowledge-base';
 
 export interface AppMenuNotice {
   message: string;

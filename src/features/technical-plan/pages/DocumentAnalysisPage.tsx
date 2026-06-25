@@ -40,9 +40,26 @@ interface DocumentAnalysisPageProps {
   originalPlanFile: TechnicalPlanOriginalPlanFile | null;
   originalPlanMarkdown: string;
   pendingSectionSelection: PendingSectionSelection | null;
+  demoMode: boolean;
   onFileImported: (state: TechnicalPlanState, markdown: string) => void;
   onOriginalPlanImported: (state: TechnicalPlanState, markdown: string) => void;
   onStateChanged: (state: TechnicalPlanState) => void;
+}
+
+function readFileAsMarkdown(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext === 'txt' || ext === 'md') {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error('文件读取失败'));
+      reader.readAsText(file);
+    } else if (ext === 'docx' || ext === 'pdf' || ext === 'doc' || ext === 'wps') {
+      resolve(`> 演示模式提示：${file.name}  \n> 该文件类型（.${ext}）需要通过后端解析服务转换为 Markdown。  \n> 当前为演示模式，此处显示为占位内容。部署后端后将自动解析为完整内容。\n\n---\n\n请部署后端 API 以获得真实解析结果。`);
+    } else {
+      reject(new Error(`不支持的文件类型：.${ext}`));
+    }
+  });
 }
 
 function DocumentAnalysisPage({
@@ -52,6 +69,7 @@ function DocumentAnalysisPage({
   originalPlanFile,
   originalPlanMarkdown,
   pendingSectionSelection,
+  demoMode,
   onFileImported,
   onOriginalPlanImported,
   onStateChanged,
@@ -149,6 +167,19 @@ function DocumentAnalysisPage({
         onFileImported(result.state, result.markdown);
         showToast(result.message || '招标文件已导入', 'success');
       } catch (error) {
+        if (demoMode && file) {
+          try {
+            const markdown = await readFileAsMarkdown(file);
+            onFileImported({ tenderFile: { fileName: file.name, markdownChars: markdown.length, parserLabel: '演示模式' } } as TechnicalPlanState, markdown);
+            showToast(`演示模式：已读取 ${file.name}（未经后端解析）`, 'info');
+          } catch (fallbackError) {
+            showToast(fallbackError instanceof Error ? fallbackError.message : '文件读取失败', 'error');
+          } finally {
+            setBusy(null);
+            input.value = '';
+          }
+          return;
+        }
         const message = error instanceof Error ? error.message : '文件解析失败';
         if (isLibreOfficeRequiredMessage(message)) {
           showDocumentParseNotice(message);
@@ -197,6 +228,20 @@ function DocumentAnalysisPage({
         setActiveDocumentTab('originalPlan');
         showToast(result.message || '原方案已导入', 'success');
       } catch (error) {
+        if (demoMode && file) {
+          try {
+            const markdown = await readFileAsMarkdown(file);
+            onOriginalPlanImported({ originalPlanFile: { fileName: file.name, markdownChars: markdown.length, parserLabel: '演示模式' } } as TechnicalPlanState, markdown);
+            setActiveDocumentTab('originalPlan');
+            showToast(`演示模式：已读取 ${file.name}（未经后端解析）`, 'info');
+          } catch (fallbackError) {
+            showToast(fallbackError instanceof Error ? fallbackError.message : '文件读取失败', 'error');
+          } finally {
+            setBusy(null);
+            input.value = '';
+          }
+          return;
+        }
         const message = error instanceof Error ? error.message : '文件解析失败';
         if (isLibreOfficeRequiredMessage(message)) {
           showDocumentParseNotice(message);

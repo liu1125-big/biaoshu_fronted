@@ -9,10 +9,7 @@ import { MarkdownEditor, MarkdownRenderer, useToast } from '../../../shared/ui';
 import type { ClientConfig, ImageModelStatus, OutlineData, OutlineItem } from '../../../shared/types';
 import { countReadableWords } from '../../../shared/utils/wordCount';
 import type { BackgroundTaskState, ConsistencyRepairMode, ContentGenerationOptions, ContentGenerationSectionStatus, ContentGenerationSections, ContentImageStats, ContentTableRequirement, OriginalPlanCoverageRepairMode, TechnicalPlanWorkflowKind } from '../types';
-import type { ExportFormatConfig } from '../../../shared/types/exportFormat';
-import { DEFAULT_EXPORT_FORMAT } from '../../../shared/types/exportFormat';
-import { buildExportFormatCssVars } from '../../../shared/utils/exportFormatCss';
-import { formatOutlineTitle } from '../../../shared/utils/outlineNumbering';
+import { DEFAULT_HEADING_NUMBERING, formatOutlineTitle } from '../../../shared/utils/outlineNumbering';
 
 interface ContentEditPageProps {
   workflowKind: TechnicalPlanWorkflowKind;
@@ -397,12 +394,10 @@ function ContentEditPage({
   const [pendingMinimumWordsChoice, setPendingMinimumWordsChoice] = useState<PendingMinimumWordsChoice | null>(null);
   const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
   const [pausePending, setPausePending] = useState(false);
-  const [exportFormat, setExportFormat] = useState<ExportFormatConfig>(DEFAULT_EXPORT_FORMAT);
   const firstLeafId = leaves[0]?.id || '';
   const selectedItem = outlineData?.outline && selectedItemId ? findItem(outlineData.outline, selectedItemId) : null;
   const selectedIsLeaf = Boolean(selectedItem && !selectedItem.children?.length);
   const selectedContent = selectedItem && selectedIsLeaf ? getLeafContent(selectedItem, sections) : '';
-  const exportFormatPreviewStyle = useMemo<CSSProperties>(() => buildExportFormatCssVars(exportFormat), [exportFormat]);
   const running = task?.status === 'running';
   const pausing = task?.status === 'pausing' || pausePending;
   const paused = task?.status === 'paused';
@@ -604,9 +599,6 @@ function ContentEditPage({
       .then((config) => {
         setDeveloperMode(Boolean(config.developer_mode));
         setImageModelStatus(config.image_model?.status || 'untested');
-        if (config.export_format) {
-          setExportFormat(config.export_format);
-        }
       })
       .catch((error) => console.warn('读取开发者模式失败', error));
   }, []);
@@ -1000,7 +992,7 @@ function ContentEditPage({
         >
           <span className="content-outline-dot" aria-hidden="true" />
           <span className="content-outline-text">
-            <strong>{formatOutlineTitle(item.id, item.title, exportFormat.headings[Math.min(item.id.split('.').length - 1, 5)].numbering_format)}</strong>
+            <strong>{formatOutlineTitle(item.id, item.title, DEFAULT_HEADING_NUMBERING[Math.min(item.id.split('.').length - 1, 5)])}</strong>
             <small>{isLeaf ? `${statusLabels[status]} · ${words} 字` : `${statusLabels[status]} · ${leafCount} 个小节 · ${words} 字`}</small>
           </span>
           {isLeaf && (status === 'success' || status === 'error') ? (
@@ -1155,7 +1147,7 @@ function ContentEditPage({
               placeholder="输入 Markdown 正文..."
             />
           ) : selectedItem && selectedIsLeaf && editing && isPreviewing ? (
-            <div className="markdown-viewer content-generation-output export-format-preview" style={exportFormatPreviewStyle}>
+            <div className="markdown-viewer content-generation-output">
               {draftContent.trim() ? (
                 <MarkdownContent content={draftContent} onPreviewImage={handlePreviewImage} />
               ) : (
@@ -1163,7 +1155,7 @@ function ContentEditPage({
               )}
             </div>
           ) : selectedItem && selectedIsLeaf && selectedContent.trim() ? (
-            <div className="markdown-viewer content-generation-output export-format-preview" style={exportFormatPreviewStyle}>
+            <div className="markdown-viewer content-generation-output">
               <MarkdownContent content={selectedContent} onPreviewImage={handlePreviewImage} />
             </div>
           ) : selectedItem && selectedIsLeaf ? (

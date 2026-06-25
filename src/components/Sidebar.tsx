@@ -10,7 +10,7 @@ const navigationIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = 
   'bid-generation': BidGenerationIcon,
   'technical-plan': DocumentIcon,
   'existing-plan-expansion': ExpandIcon,
-  'export-format': ExportIcon,
+  'knowledge-base': ArchiveIcon,
 };
 
 function Sidebar() {
@@ -24,7 +24,8 @@ function Sidebar() {
 
   const handleMenuItemClick = (item: AppMenuItem) => {
     if (!item.notice) {
-      navigate(`/${item.id}`);
+      const targetId = item.children?.[0]?.id || item.id;
+      navigate(`/${targetId}`);
       return;
     }
 
@@ -158,6 +159,17 @@ function ChevronIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
       <path d="m14 7-5 5 5 5" />
+    </svg>
+  );
+}
+
+function ArchiveIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M3 7.5v11c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-11" />
+      <path d="M3 7.5l2-3h14l2 3" />
+      <path d="M3 7.5h18" />
+      <path d="M10 11.5h4" />
     </svg>
   );
 }

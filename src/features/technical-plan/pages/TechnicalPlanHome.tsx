@@ -12,8 +12,6 @@ import { trackPageView } from '../../../shared/analytics/analytics';
 import { FloatingToolbar, ToolbarArrowLeftIcon, ToolbarArrowRightIcon, ToolbarDocumentIcon, useToast } from '../../../shared/ui';
 import type { BackgroundTaskState, BidAnalysisTasks, ContentGenerationOptions, GlobalFactGroupState, SaveOutlineRequest, TechnicalPlanState, TechnicalPlanStep, TechnicalPlanWorkflowKind } from '../types';
 import type { OutlineData, OutlineItem, WordExportProgressEvent } from '../../../shared/types';
-import type { ExportFormatConfig } from '../../../shared/types/exportFormat';
-import { DEFAULT_EXPORT_FORMAT } from '../../../shared/types/exportFormat';
 import type { SectionId } from '../../../shared/types/navigation';
 
 interface TechnicalPlanHomeProps {
@@ -199,7 +197,6 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
   const [tenderMarkdown, setTenderMarkdown] = useState('');
   const [originalPlanMarkdown, setOriginalPlanMarkdown] = useState('');
   const [exportProgress, setExportProgress] = useState<ExportProgressState>(initialExportProgress);
-  const [exportFormat, setExportFormat] = useState<ExportFormatConfig>(DEFAULT_EXPORT_FORMAT);
   const [sortLeaveDialogOpen, setSortLeaveDialogOpen] = useState(false);
   const [savingSortBeforeLeave, setSavingSortBeforeLeave] = useState(false);
   const [workflowSwitchRequest, setWorkflowSwitchRequest] = useState<WorkflowSwitchRequest | null>(null);
@@ -413,16 +410,6 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
   }, [state.workflowKind, workflowKind]);
 
   useEffect(() => {
-    let cancelled = false;
-    apiClient.config.load().then((cfg) => {
-      if (!cancelled && cfg?.export_format) {
-        setExportFormat(cfg.export_format);
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
     if (!registerLeaveGuard) return;
     registerLeaveGuard(confirmPendingSortLeave);
     return () => registerLeaveGuard(null);
@@ -577,6 +564,7 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
       setTenderMarkdown('');
       return;
     }
+    if (demoMode) return;
     let mounted = true;
     apiClient.technicalPlan.readTenderMarkdown().then((markdown) => {
       if (mounted) setTenderMarkdown(markdown || '');
@@ -586,7 +574,7 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
     return () => {
       mounted = false;
     };
-  }, [showToast, state.step, state.tenderFile]);
+  }, [demoMode, showToast, state.step, state.tenderFile]);
 
   useEffect(() => {
     if (state.step !== 'document-analysis' || !requiresOriginalPlan) {
@@ -597,6 +585,7 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
       setOriginalPlanMarkdown('');
       return;
     }
+    if (demoMode) return;
     let mounted = true;
     apiClient.technicalPlan.readOriginalPlanMarkdown().then((markdown) => {
       if (mounted) setOriginalPlanMarkdown(markdown || '');
@@ -606,22 +595,13 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
     return () => {
       mounted = false;
     };
-  }, [requiresOriginalPlan, showToast, state.originalPlanFile, state.step]);
+  }, [demoMode, requiresOriginalPlan, showToast, state.originalPlanFile, state.step]);
 
   const exportWord = async () => {
     if (!state.outlineData?.outline?.length) {
       showToast('请先生成目录', 'info');
       return;
     }
-
-    // 每次导出前重新读取最新配置（用户可能在导出格式页修改过）
-    let latestExportFormat = exportFormat;
-    try {
-      const cfg = await apiClient.config.load();
-      if (cfg?.export_format) {
-        latestExportFormat = cfg.export_format;
-      }
-    } catch { /* 读不到用已有值 */ }
 
     const requestId = `export-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const mermaidCount = countOutlineMermaidDiagrams(state.outlineData.outline);
@@ -659,7 +639,6 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
         requestId,
         project_name: state.outlineData.project_name,
         outline: state.outlineData.outline,
-        export_format: latestExportFormat,
       });
       if (result?.canceled) {
         setExportProgress(initialExportProgress);
@@ -834,6 +813,7 @@ function TechnicalPlanHome({ workflowKind, registerLeaveGuard, onSectionChange }
           originalPlanFile={state.originalPlanFile}
           originalPlanMarkdown={originalPlanMarkdown}
           pendingSectionSelection={state.pendingSectionSelection}
+          demoMode={demoMode}
           onFileImported={(nextState, markdown) => {
             setState((prev) => ({ ...prev, ...nextState }));
             setTenderMarkdown(markdown);

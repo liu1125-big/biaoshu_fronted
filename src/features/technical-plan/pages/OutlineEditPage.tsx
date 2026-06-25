@@ -7,9 +7,7 @@ import { useToast } from '../../../shared/ui';
 import type { BackgroundTaskState, SaveOutlineRequest, TechnicalPlanWorkflowKind } from '../types';
 import type { KnowledgeBaseIndex, KnowledgeDocument } from '../../knowledge-base/types';
 import type { OutlineData, OutlineExpansionMode, OutlineItem } from '../../../shared/types';
-import type { ExportFormatConfig } from '../../../shared/types/exportFormat';
-import { DEFAULT_EXPORT_FORMAT } from '../../../shared/types/exportFormat';
-import { formatOutlineTitle } from '../../../shared/utils/outlineNumbering';
+import { DEFAULT_HEADING_NUMBERING, formatOutlineTitle } from '../../../shared/utils/outlineNumbering';
 
 interface OutlineEditPageProps {
   workflowKind: TechnicalPlanWorkflowKind;
@@ -248,7 +246,6 @@ function OutlineEditPage({
   const [nowTick, setNowTick] = useState(() => Date.now());
   const [sorting, setSorting] = useState(false);
   const [draftOutlineData, setDraftOutlineData] = useState<OutlineData | null>(null);
-  const [exportFormat, setExportFormat] = useState<ExportFormatConfig>(DEFAULT_EXPORT_FORMAT);
   const [sortDirty, setSortDirty] = useState(false);
   const [savingSort, setSavingSort] = useState(false);
   const [draggingItemId, setDraggingItemId] = useState<string | null>(null);
@@ -283,16 +280,6 @@ function OutlineEditPage({
   const effectiveStartedAt = Number.isFinite(startedAt) ? startedAt : localStartAt;
   const elapsedText = generating && effectiveStartedAt ? `已运行 ${formatDuration(nowTick - effectiveStartedAt)}` : '';
   const staleText = generating && Number.isFinite(updatedAt) ? `最近更新 ${Math.floor(Math.max(0, nowTick - updatedAt) / 1000)} 秒前` : '';
-
-  useEffect(() => {
-    let cancelled = false;
-    apiClient.config.load().then((cfg) => {
-      if (!cancelled && cfg?.export_format) {
-        setExportFormat(cfg.export_format);
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
 
   useEffect(() => {
     if (activeOutlineData?.outline?.length) {
@@ -790,7 +777,7 @@ function OutlineEditPage({
             onClick={() => setSelectedItemId(item.id)}
             onDoubleClick={() => hasChildren && toggleExpanded(item.id)}
           >
-            <strong>{formatOutlineTitle(item.id, item.title, exportFormat.headings[Math.min(item.id.split('.').length - 1, 5)].numbering_format)}</strong>
+            <strong>{formatOutlineTitle(item.id, item.title, DEFAULT_HEADING_NUMBERING[Math.min(item.id.split('.').length - 1, 5)])}</strong>
             <small>{item.description || '无描述'}</small>
           </button>
         </div>

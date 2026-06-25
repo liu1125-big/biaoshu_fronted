@@ -12,17 +12,19 @@ export const appMenuItems: AppMenuItem[] = [
         description: '根据招标文件重头编写一份标书',
         icon: 'document',
       },
-      {
-        id: 'existing-plan-expansion',
-        label: '已有方案扩写',
-        description: '解决人写技术方案太薄的问题，上传写好的方案，进行优化和扩充',
-        icon: 'expand',
-      },
     ],
   },
   {
-    id: 'export-format',
-    label: '导出格式',
-    description: 'Word 文档排版与编号格式设置',
+    id: 'knowledge-base',
+    label: '知识库',
+    description: '文档管理与知识条目提取',
+    children: [
+      {
+        id: 'document-knowledge-base',
+        label: '文档知识库',
+        description: '管理历史资料，提取知识条目用于标书生成',
+        icon: 'document',
+      },
+    ],
   },
 ];

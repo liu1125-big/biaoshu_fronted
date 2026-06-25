@@ -3,7 +3,29 @@
  * 每个标题级别独立选择编号格式：第一章/第一节/一、/1./（一）/(1) 等
  */
 
-import type { NumberingFormat } from '../types/exportFormat';
+export const NUMBERING_FORMATS = [
+  { value: 'chinese-chapter', label: '第一章', hint: '第{一}章' },
+  { value: 'chinese-section', label: '第一节', hint: '第{一}节' },
+  { value: 'chinese-dun', label: '一、', hint: '{一}、' },
+  { value: 'chinese-paren', label: '（一）', hint: '（{一}）' },
+  { value: 'arabic-dun', label: '1、', hint: '{1}、' },
+  { value: 'arabic-dot', label: '1.', hint: '{1}.' },
+  { value: 'arabic-paren', label: '(1)', hint: '({1})' },
+  { value: 'arabic', label: '1', hint: '{1}' },
+  { value: 'none', label: '无编号', hint: '无编号前缀' },
+] as const;
+
+export type NumberingFormat = (typeof NUMBERING_FORMATS)[number]['value'];
+
+/** 6 级标题的默认编号格式（与原 DEFAULT_EXPORT_FORMAT.headings 一致） */
+export const DEFAULT_HEADING_NUMBERING: NumberingFormat[] = [
+  'chinese-chapter',  // 第一章
+  'chinese-section',  // 第一节
+  'chinese-dun',      // 一、
+  'chinese-paren',    // （一）
+  'arabic-dun',       // 1、
+  'arabic-paren',     // (1)
+];
 
 /**
  * 阿拉伯数字转中文数字（1~9999）
