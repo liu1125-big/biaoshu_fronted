@@ -23,11 +23,8 @@ interface ConfigUsagePayload {
   use_ai_images?: boolean;
   content_concurrency?: number;
   content_generation_action?: string;
-  minimum_words?: number;
   enable_consistency_audit?: boolean;
   consistency_repair_mode?: string;
-  enable_original_plan_coverage_audit?: boolean;
-  original_plan_coverage_repair_mode?: string;
 }
 
 const configUsageFields: Array<[keyof ConfigUsagePayload, string]> = [
@@ -41,11 +38,8 @@ const configUsageFields: Array<[keyof ConfigUsagePayload, string]> = [
   ['use_ai_images', 'useAiImages'],
   ['content_concurrency', 'contentConcurrencies'],
   ['content_generation_action', 'contentGenerationActions'],
-  ['minimum_words', 'minimumWords'],
   ['enable_consistency_audit', 'enableConsistencyAudit'],
   ['consistency_repair_mode', 'consistencyRepairModes'],
-  ['enable_original_plan_coverage_audit', 'enableOriginalPlanCoverageAudit'],
-  ['original_plan_coverage_repair_mode', 'originalPlanCoverageRepairModes'],
 ];
 
 let appOpenTracked = false;
@@ -143,7 +137,6 @@ function normalizeUsagePayload(payload: ConfigUsagePayload) {
     use_mermaid_images: booleanText(payload.use_mermaid_images),
     use_ai_images: booleanText(payload.use_ai_images),
     enable_consistency_audit: booleanText(payload.enable_consistency_audit),
-    enable_original_plan_coverage_audit: booleanText(payload.enable_original_plan_coverage_audit),
   };
 }
 

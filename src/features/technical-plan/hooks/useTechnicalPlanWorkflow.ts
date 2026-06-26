@@ -3,10 +3,8 @@ import { technicalPlanStorage } from '../services/technicalPlanStorage';
 import type { TechnicalPlanState } from '../types';
 
 const initialState: TechnicalPlanState = {
-  workflowKind: 'technical-plan',
   step: 'document-analysis',
   tenderFile: null,
-  originalPlanFile: null,
   projectOverview: '',
   techRequirements: '',
   bidAnalysisMode: 'key',
@@ -14,12 +12,9 @@ const initialState: TechnicalPlanState = {
   bidAnalysisTasks: {},
   bidAnalysisProgress: 0,
   outlineMode: 'aligned',
-  outlineExpansionMode: 'ai-complement',
   referenceKnowledgeDocumentIds: [],
   bidAnalysisTask: undefined,
   outlineGenerationTask: undefined,
-  globalFactsTask: undefined,
-  globalFacts: [],
   contentGenerationTask: undefined,
   contentGenerationSections: {},
   contentGenerationPlans: {},
@@ -39,7 +34,7 @@ export function useTechnicalPlanWorkflow() {
       try {
         const cachedState = await technicalPlanStorage.load();
         if (mounted && cachedState) {
-          setState({ ...initialState, ...cachedState, outlineExpansionMode: cachedState.outlineExpansionMode || 'ai-complement' });
+          setState({ ...initialState, ...cachedState });
         }
       } catch (error) {
         console.warn('技术方案缓存读取失败', error);

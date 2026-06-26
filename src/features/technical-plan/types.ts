@@ -1,15 +1,13 @@
-import type { OutlineData, OutlineExpansionMode, OutlineMode } from '../../shared/types';
+import type { OutlineData, OutlineMode } from '../../shared/types';
 
-export type TechnicalPlanStep = 'document-analysis' | 'bid-analysis' | 'outline-generation' | 'global-facts' | 'content-edit' | 'expand';
-export type TechnicalPlanWorkflowKind = 'technical-plan' | 'existing-plan-expansion';
+export type TechnicalPlanStep = 'document-analysis' | 'bid-analysis' | 'outline-generation' | 'content-edit';
 export type BidAnalysisMode = 'key' | 'full' | 'custom';
 export type BidAnalysisTaskStatus = 'idle' | 'running' | 'success' | 'error';
-export type BackgroundTaskType = 'bid-analysis' | 'outline-generation' | 'global-facts-generation' | 'content-generation';
+export type BackgroundTaskType = 'bid-analysis' | 'outline-generation' | 'content-generation';
 export type BackgroundTaskStatus = 'running' | 'pausing' | 'paused' | 'success' | 'error';
 export type ContentGenerationSectionStatus = 'idle' | 'running' | 'success' | 'error';
 export type ContentTableRequirement = 'none' | 'light' | 'moderate' | 'heavy';
 export type ConsistencyRepairMode = 'agent' | 'normal';
-export type OriginalPlanCoverageRepairMode = 'agent' | 'normal';
 export type SaveOutlineReason = 'sort' | 'edit' | 'delete' | 'add-root' | 'add-child' | 'replace';
 
 export interface SaveOutlineRequest {
@@ -24,11 +22,8 @@ export interface ContentGenerationOptions {
   maxAiImages: number;
   useMermaidImages: boolean;
   tableRequirement: ContentTableRequirement;
-  minimumWords: number;
   enableConsistencyAudit: boolean;
   consistencyRepairMode: ConsistencyRepairMode;
-  enableOriginalPlanCoverageAudit: boolean;
-  originalPlanCoverageRepairMode: OriginalPlanCoverageRepairMode;
 }
 
 export interface ContentImageStats {
@@ -50,20 +45,11 @@ export interface BackgroundTaskState {
   error?: string;
   stats?: {
     content?: {
-      phase: 'planning' | 'restoring' | 'generating' | 'outline-expanding' | 'expanding' | 'original-auditing' | 'auditing' | 'table-cleaning' | 'illustrating' | 'done';
+      phase: 'planning' | 'generating' | 'auditing' | 'table-cleaning' | 'illustrating' | 'done';
       planning_total: number;
       planning_completed: number;
       generation_total: number;
       generation_completed: number;
-      outline_expansion_total?: number;
-      outline_expansion_completed?: number;
-      outline_expansion_step_total?: number;
-      outline_expansion_step_completed?: number;
-      outline_expansion_round?: number;
-      outline_expansion_round_total?: number;
-      outline_expansion_step_label?: string;
-      minimum_words?: number;
-      current_words?: number;
       audit_group_total?: number;
       audit_group_completed?: number;
       audit_conflict_total?: number;
@@ -100,13 +86,6 @@ export interface BidAnalysisTaskState {
 }
 
 export type BidAnalysisTasks = Record<string, BidAnalysisTaskState>;
-
-export interface GlobalFactGroupState {
-  id: string;
-  title: string;
-  content: string;
-  updated_at?: string;
-}
 
 export interface ContentGenerationSectionState {
   id: string;
@@ -148,16 +127,6 @@ export interface ContentGenerationPlanData {
     priority: number;
     reason: string;
   };
-  original_material?: {
-    restored: boolean;
-    optimized: boolean;
-    source_ids: string[];
-    source_titles: string[];
-    source_hashes: string[];
-    restored_chars: number;
-    restored_at?: string;
-    optimized_at?: string;
-  };
 }
 
 export interface ContentGenerationPlanState {
@@ -172,7 +141,6 @@ export type ContentGenerationPlans = Record<string, ContentGenerationPlanState>;
 export interface ContentGenerationRuntimeState {
   phase?: string;
   touched_item_ids?: string[];
-  outline_expansion_completed?: number;
   expansion_cycle_item_ids?: string[];
   expansion_attempted_item_ids?: string[];
   expansion_cycle_start_words?: number;
@@ -194,16 +162,6 @@ export interface TechnicalPlanTenderFile {
   updatedAt: string;
 }
 
-export interface TechnicalPlanOriginalPlanFile {
-  fileName: string;
-  markdownPath: string;
-  markdownChars: number;
-  contentHash: string;
-  parserLabel?: string;
-  importedAt?: string;
-  updatedAt: string;
-}
-
 export interface DetectedBidSection {
   id: string;
   index: number;
@@ -222,10 +180,8 @@ export interface PendingSectionSelection {
 }
 
 export interface TechnicalPlanState {
-  workflowKind: TechnicalPlanWorkflowKind;
   step: TechnicalPlanStep;
   tenderFile: TechnicalPlanTenderFile | null;
-  originalPlanFile: TechnicalPlanOriginalPlanFile | null;
   projectOverview: string;
   techRequirements: string;
   bidAnalysisMode: BidAnalysisMode;
@@ -233,12 +189,9 @@ export interface TechnicalPlanState {
   bidAnalysisTasks: BidAnalysisTasks;
   bidAnalysisProgress: number;
   outlineMode: OutlineMode;
-  outlineExpansionMode: OutlineExpansionMode;
   referenceKnowledgeDocumentIds: string[];
   bidAnalysisTask?: BackgroundTaskState;
   outlineGenerationTask?: BackgroundTaskState;
-  globalFactsTask?: BackgroundTaskState;
-  globalFacts: GlobalFactGroupState[];
   contentGenerationTask?: BackgroundTaskState;
   contentGenerationOptions?: ContentGenerationOptions;
   contentGenerationSections: ContentGenerationSections;
@@ -246,4 +199,29 @@ export interface TechnicalPlanState {
   contentGenerationRuntime?: ContentGenerationRuntimeState;
   outlineData: OutlineData | null;
   pendingSectionSelection: PendingSectionSelection | null;
+}
+
+export type ProjectStatus = 'draft' | 'in-progress' | 'completed' | 'archived';
+
+export interface Project {
+  id: string;
+  name: string;
+  status: ProjectStatus;
+  created_at: string;
+  updated_at: string;
+  tender_file_name?: string;
+  outline_section_count?: number;
+  content_word_count?: number;
+}
+
+export interface ProjectListResult {
+  success: boolean;
+  message?: string;
+  projects: Project[];
+}
+
+export interface ProjectMutationResult {
+  success: boolean;
+  message?: string;
+  project?: Project;
 }

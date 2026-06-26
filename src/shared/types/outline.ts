@@ -10,7 +10,6 @@ export interface OutlineItem {
 }
 
 export type OutlineMode = 'aligned';
-export type OutlineExpansionMode = 'original-only' | 'ai-complement';
 
 export interface OutlineData {
   outline: OutlineItem[];

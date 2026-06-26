@@ -5,9 +5,7 @@ const validSteps: TechnicalPlanStep[] = [
   'document-analysis',
   'bid-analysis',
   'outline-generation',
-  'global-facts',
   'content-edit',
-  'expand',
 ];
 
 function isTechnicalPlanState(state: TechnicalPlanState | null): state is TechnicalPlanState {

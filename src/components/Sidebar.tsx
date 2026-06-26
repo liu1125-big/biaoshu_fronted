@@ -9,7 +9,6 @@ import logoUrl from '/icon_256.png';
 const navigationIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   'bid-generation': BidGenerationIcon,
   'technical-plan': DocumentIcon,
-  'existing-plan-expansion': ExpandIcon,
   'knowledge-base': ArchiveIcon,
 };
 
