@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
 import { isLibreOfficeRequiredMessage, MarkdownRenderer, useDocumentParseNotice, useToast } from '../../../shared/ui';
-import type { FileParserProvider } from '../../../shared/types';
-import type { PendingSectionSelection, TechnicalPlanState, TechnicalPlanTenderFile } from '../types';
-import BidSectionSelectorDialog from '../components/BidSectionSelectorDialog';
 
-type TechnicalPlanUploadBusy = 'tender' | 'section' | null;
+import type { TechnicalPlanState, TechnicalPlanTenderFile } from '../types';
+
+type TechnicalPlanUploadBusy = 'tender' | null;
 type ParseStage = 'idle' | 'uploading' | 'parsing' | 'done';
 
 const WORD_FILE_EXTENSIONS = new Set(['doc', 'docx']);
@@ -15,11 +14,6 @@ function isWordFile(file: File): boolean {
   return Boolean(ext && WORD_FILE_EXTENSIONS.has(ext));
 }
 
-const parserLabels: Record<FileParserProvider, string> = {
-  local: '本地解析',
-  'mineru-accurate-api': 'MinerU 精准解析 API',
-  'mineru-agent-api': 'MinerU-Agent 轻量解析 API',
-};
 
 function DocumentFilePill({ file }: { file: TechnicalPlanTenderFile }) {
   return (
@@ -36,7 +30,6 @@ function DocumentFilePill({ file }: { file: TechnicalPlanTenderFile }) {
 interface DocumentAnalysisPageProps {
   tenderFile: TechnicalPlanTenderFile | null;
   tenderMarkdown: string;
-  pendingSectionSelection: PendingSectionSelection | null;
   demoMode: boolean;
   onFileImported: (state: TechnicalPlanState, markdown: string) => void;
   onStateChanged: (state: TechnicalPlanState) => void;
@@ -61,14 +54,11 @@ function readFileAsMarkdown(file: File): Promise<string> {
 function DocumentAnalysisPage({
   tenderFile,
   tenderMarkdown,
-  pendingSectionSelection,
   demoMode,
   onFileImported,
   onStateChanged,
 }: DocumentAnalysisPageProps) {
-  const [configuredParserLabel, setConfiguredParserLabel] = useState(parserLabels.local);
   const [busy, setBusy] = useState<TechnicalPlanUploadBusy>(null);
-  const [pendingSelection, setPendingSelection] = useState<PendingSectionSelection | null>(null);
   const [lastFailedFile, setLastFailedFile] = useState<File | null>(null);
   const [parseStage, setParseStage] = useState<ParseStage>('idle');
   const [parseStageProgress, setParseStageProgress] = useState(0);
@@ -78,35 +68,6 @@ function DocumentAnalysisPage({
   const { showToast } = useToast();
   const { showDocumentParseNotice } = useDocumentParseNotice();
   const isBusy = busy !== null;
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadParserConfig = async () => {
-      if (!apiClient) {
-        return;
-      }
-
-      try {
-        const config = await apiClient.config.load();
-        if (mounted) {
-          setConfiguredParserLabel(parserLabels[config.file_parser.provider] || parserLabels.local);
-        }
-      } catch (error) {
-        showToast(error instanceof Error ? error.message : '读取文件解析配置失败', 'error');
-      }
-    };
-
-    loadParserConfig();
-
-    return () => {
-      mounted = false;
-    };
-  }, [showToast]);
-
-  useEffect(() => {
-    setPendingSelection(pendingSectionSelection);
-  }, [pendingSectionSelection]);
 
   useEffect(() => {
     if (parseStage !== 'uploading') return undefined;
@@ -151,22 +112,6 @@ function DocumentAnalysisPage({
         setLastFailedFile(file);
         setParseStage('idle');
         setParseStageMessage('');
-        return;
-      }
-
-      if (result.needsSectionSelection && result.sections) {
-        const nextPendingSelection = {
-          fileName: result.fileName || '未命名文件',
-          parserLabel: result.parserLabel || undefined,
-          sections: result.sections,
-          totalDeclared: result.totalDeclared,
-        };
-        setPendingSelection(nextPendingSelection);
-        if (result.state) {
-          onStateChanged(result.state);
-        }
-        setParseStage('done');
-        setParseStageMessage('等待选择投标范围');
         return;
       }
 
@@ -263,52 +208,12 @@ function DocumentAnalysisPage({
     void importTenderDocument(lastFailedFile);
   };
 
-  const handleSectionSelect = async (sectionId: string) => {
-    if (!pendingSelection) return;
-    try {
-      setBusy('section');
-      const selectedSection = pendingSelection.sections.find((section) => section.id === sectionId);
-      if (!selectedSection) {
-        showToast('未找到选择的投标范围', 'error');
-        return;
-      }
-      const result = await apiClient.technicalPlan.selectBidSection(selectedSection);
-      if (!result?.success || !result.state || !result.markdown) {
-        showToast(result?.message || '标段选择失败', 'error');
-        return;
-      }
-      onFileImported(result.state, result.markdown);
-      showToast(result.message || '已选择标段并导入招标文件', 'success');
-      setPendingSelection(null);
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : '标段选择失败', 'error');
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const handleSectionCancel = async () => {
-    if (!pendingSelection) return;
-    try {
-      const result = await apiClient.technicalPlan.cancelBidSectionSelection();
-      if (result?.state) {
-        onStateChanged(result.state);
-      }
-    } catch {
-      // 忽略取消失败
-    }
-    setPendingSelection(null);
-  };
-
-  const selectedSectionTitle = tenderFile?.selectedSectionTitle;
-  const selectedSectionHeadLine = tenderFile?.selectedSectionHeadLine;
-  const hasSectionHint = Boolean(selectedSectionTitle);
   const activeFile = tenderFile;
   const activeMarkdown = tenderMarkdown;
   const readerEmptyText = '当前步骤只负责把招标文件解析成 Markdown。下一步再基于这里的 Markdown 内容进行 AI 标书理解。';
 
   return (
-    <div className={`plan-step-body document-analysis-page technical-document-page${hasSectionHint ? ' has-section-hint' : ''}`}>
+    <div className="plan-step-body document-analysis-page technical-document-page">
       <section
         className={`technical-document-upload-board${isDragging ? ' is-dragging' : ''}`}
         onDragOver={handleDragOver}
@@ -319,7 +224,6 @@ function DocumentAnalysisPage({
           <div>
             <span className="section-kicker">STEP 01</span>
             <h2>选择标书</h2>
-            <p>默认解析方案：{configuredParserLabel}</p>
           </div>
         </div>
 
@@ -366,16 +270,6 @@ function DocumentAnalysisPage({
         )}
       </section>
 
-      {selectedSectionTitle && (
-        <section className="analysis-section-hint">
-          <strong>投标范围：</strong>
-          <span>{selectedSectionTitle}</span>
-          {selectedSectionHeadLine && (
-            <span className="analysis-section-hint-detail">（{selectedSectionHeadLine.replace(/^.*?(?:标段|标包|分包|包)[：:]\s*/, '')}）</span>
-          )}
-        </section>
-      )}
-
       <section className="technical-document-reader-card analysis-markdown-card">
         <div className="analysis-result-head technical-document-reader-head">
           <strong>招标文件内容</strong>
@@ -397,15 +291,6 @@ function DocumentAnalysisPage({
       </section>
 
       <input ref={tenderInputRef} type="file" style={{ display: 'none' }} accept=".doc,.docx" onChange={handleFileInputChange} />
-
-      <BidSectionSelectorDialog
-        open={Boolean(pendingSelection)}
-        sections={pendingSelection?.sections || []}
-        totalDeclared={pendingSelection?.totalDeclared}
-        onSelect={handleSectionSelect}
-        onCancel={handleSectionCancel}
-        busy={isBusy}
-      />
     </div>
   );
 }

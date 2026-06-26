@@ -20,7 +20,6 @@ const initialState: TechnicalPlanState = {
   contentGenerationPlans: {},
   contentGenerationRuntime: undefined,
   outlineData: null,
-  pendingSectionSelection: null,
 };
 
 export function useTechnicalPlanWorkflow() {

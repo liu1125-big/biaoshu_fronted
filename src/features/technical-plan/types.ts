@@ -162,23 +162,6 @@ export interface TechnicalPlanTenderFile {
   updatedAt: string;
 }
 
-export interface DetectedBidSection {
-  id: string;
-  index: number;
-  unit: string;
-  title: string;
-  headLine: string;
-  description: string;
-}
-
-export interface PendingSectionSelection {
-  fileName: string;
-  parserLabel?: string | null;
-  sections: DetectedBidSection[];
-  totalDeclared?: number | null;
-  createdAt?: string;
-}
-
 export interface TechnicalPlanState {
   step: TechnicalPlanStep;
   tenderFile: TechnicalPlanTenderFile | null;
@@ -198,7 +181,6 @@ export interface TechnicalPlanState {
   contentGenerationPlans: ContentGenerationPlans;
   contentGenerationRuntime?: ContentGenerationRuntimeState;
   outlineData: OutlineData | null;
-  pendingSectionSelection: PendingSectionSelection | null;
 }
 
 export type ProjectStatus = 'draft' | 'in-progress' | 'completed' | 'archived';

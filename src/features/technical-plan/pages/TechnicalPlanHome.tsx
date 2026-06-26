@@ -57,7 +57,6 @@ const resetState: TechnicalPlanState = {
   contentGenerationPlans: {},
   contentGenerationRuntime: undefined,
   outlineData: null,
-  pendingSectionSelection: null,
 };
 
 function collectLeafItems(items: OutlineItem[]): OutlineItem[] {
@@ -160,17 +159,14 @@ function TechnicalPlanHome({ registerLeaveGuard, onBackToProjects }: TechnicalPl
   const isContentGenerating = contentTaskStatus === 'running' || contentTaskStatus === 'pausing';
   const isContentPaused = contentTaskStatus === 'paused';
   const isExporting = exportProgress.running;
-  const hasPendingSectionSelection = Boolean(state.pendingSectionSelection);
   const isNextDisabled = demoMode
     ? activeIndex >= steps.length - 1
     : activeIndex >= steps.length - 1
-      || (state.step === 'document-analysis' && (!state.tenderFile || hasPendingSectionSelection))
+      || (state.step === 'document-analysis' && !state.tenderFile)
       || (state.step === 'bid-analysis' && !bidAnalysisReady)
       || (state.step === 'outline-generation' && !state.outlineData);
-  const nextTooltip = state.step === 'document-analysis' && hasPendingSectionSelection
-    ? '请先选择本次投标范围'
-    : state.step === 'document-analysis' && !state.tenderFile
-      ? '上传完招标文件后才能进入下一步'
+  const nextTooltip = state.step === 'document-analysis' && !state.tenderFile
+    ? '上传完招标文件后才能进入下一步'
       : state.step === 'bid-analysis' && isBidAnalysisTaskRunning
         ? '招标文件解析任务仍在运行，请等待当前任务结束'
         : state.step === 'bid-analysis' && !requiredBidAnalysisReady
@@ -583,7 +579,6 @@ function TechnicalPlanHome({ registerLeaveGuard, onBackToProjects }: TechnicalPl
         <DocumentAnalysisPage
           tenderFile={state.tenderFile}
           tenderMarkdown={tenderMarkdown}
-          pendingSectionSelection={state.pendingSectionSelection}
           demoMode={demoMode}
           onFileImported={(nextState, markdown) => {
             setState((prev) => ({ ...prev, ...nextState }));
