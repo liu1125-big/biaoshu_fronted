@@ -200,6 +200,7 @@ function BidAnalysisPage({
   onProgressChange,
   onConfigSaved,
 }: BidAnalysisPageProps) {
+  useEffect(() => { document.title = '投标分析'; }, []);
   const [running, setRunning] = useState(false);
   const [fullRerunLocked, setFullRerunLocked] = useState(false);
   const [fullRerunSeenRunning, setFullRerunSeenRunning] = useState(false);

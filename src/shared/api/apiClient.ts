@@ -107,89 +107,88 @@ export const apiClient = {
     },
   },
 
-  knowledgeBase: {
-    list: async (): Promise<any> => {
-      const { data } = await http.get(ENDPOINTS.KNOWLEDGE_BASE_LIST);
-      return data;
-    },
-    getMigrationStatus: async (): Promise<any> => {
-      const { data } = await http.get(ENDPOINTS.KNOWLEDGE_BASE_GET_MIGRATION_STATUS);
-      return data;
-    },
-    migrateLegacy: async (): Promise<any> => {
-      const { data } = await http.post(ENDPOINTS.KNOWLEDGE_BASE_MIGRATE_LEGACY);
-      return data;
-    },
-    createFolder: async (name: string): Promise<any> => {
-      const { data } = await http.post(ENDPOINTS.KNOWLEDGE_BASE_CREATE_FOLDER, { name });
-      return data;
-    },
-    renameFolder: async (folderId: string, name: string): Promise<any> => {
-      const { data } = await http.put(ENDPOINTS.KNOWLEDGE_BASE_RENAME_FOLDER, { folderId, name });
-      return data;
-    },
-    deleteFolder: async (folderId: string): Promise<any> => {
-      const { data } = await http.delete(ENDPOINTS.KNOWLEDGE_BASE_DELETE_FOLDER, { data: { folderId } });
-      return data;
-    },
-    reorderFolder: async (folderId: string, targetFolderId: string, position: string): Promise<any> => {
-      const { data } = await http.put(ENDPOINTS.KNOWLEDGE_BASE_REORDER_FOLDER, { folderId, targetFolderId, position });
-      return data;
-    },
-    uploadDocuments: async (folderId: string): Promise<any> => {
-      const formData = new FormData();
-      formData.append('folderId', folderId);
-      const { data } = await http.post(ENDPOINTS.KNOWLEDGE_BASE_UPLOAD_DOCUMENTS, formData);
-      return data;
-    },
-    deleteDocument: async (documentId: string): Promise<any> => {
-      const { data } = await http.delete(ENDPOINTS.KNOWLEDGE_BASE_DELETE_DOCUMENT, { data: { documentId } });
-      return data;
-    },
-    retryDocument: async (documentId: string): Promise<any> => {
-      const { data } = await http.post(ENDPOINTS.KNOWLEDGE_BASE_RETRY_DOCUMENT, { documentId });
-      return data;
-    },
-    moveDocument: async (documentId: string, folderId: string, targetDocumentId: string | null, position: string): Promise<any> => {
-      const { data } = await http.put(ENDPOINTS.KNOWLEDGE_BASE_MOVE_DOCUMENT, { documentId, folderId, targetDocumentId, position });
-      return data;
-    },
-    readMarkdown: async (documentId: string): Promise<string> => {
-      const { data } = await http.get(ENDPOINTS.KNOWLEDGE_BASE_READ_MARKDOWN, { params: { documentId } });
-      return data.markdown || data;
-    },
-    readItems: async (documentId: string): Promise<any[]> => {
-      const { data } = await http.get(ENDPOINTS.KNOWLEDGE_BASE_READ_ITEMS, { params: { documentId } });
-      return data.items || data;
-    },
-    readAnalysis: async (documentId: string): Promise<any> => {
-      const { data } = await http.get(ENDPOINTS.KNOWLEDGE_BASE_READ_ANALYSIS, { params: { documentId } });
-      return data;
-    },
-    startMatching: async (documentId: string, batchSize: number): Promise<any> => {
-      const { data } = await http.post(ENDPOINTS.KNOWLEDGE_BASE_START_MATCHING, { documentId, batchSize });
-      return data;
-    },
-    onEvent: (callback: (event: any) => void): (() => void) => {
-      let closed = false;
-      const eventSource = new EventSource(ENDPOINTS.KNOWLEDGE_BASE_EVENTS);
-      eventSource.onmessage = (msg) => {
-        if (closed) return;
-        try {
-          const parsed = JSON.parse(msg.data);
-          callback(parsed);
-        } catch { /* ignore malformed SSE */ }
-      };
-      eventSource.onerror = () => {
-        closed = true;
-        eventSource.close();
-      };
-      return () => {
-        closed = true;
-        eventSource.close();
-      };
-    },
-  },
+  knowledgeBase: (() => {
+    type KbStatus = 'pending' | 'copying' | 'converting' | 'extracting' | 'ready_for_matching' | 'matching' | 'recovering' | 'analyzing' | 'saving' | 'success' | 'error';
+
+    const mockFolders = [
+      { id: 'f-1', name: '招标文件', sort_order: 0, created_at: '2026-06-01T10:00:00Z', updated_at: '2026-06-20T14:30:00Z' },
+      { id: 'f-2', name: '技术规范', sort_order: 1, created_at: '2026-06-02T09:00:00Z', updated_at: '2026-06-21T11:00:00Z' },
+    ];
+    const mockDocuments: Array<{
+      id: string; folder_id: string; file_name: string; status: KbStatus; progress: number;
+      message: string; item_count: number; block_count?: number; created_at: string; updated_at: string; error?: string;
+    }> = [
+      { id: 'd-1', folder_id: 'f-1', file_name: 'XX公路招标文件.docx', status: 'success', progress: 100, message: '处理完成', item_count: 128, block_count: 45, created_at: '2026-06-01T10:05:00Z', updated_at: '2026-06-01T10:30:00Z' },
+      { id: 'd-2', folder_id: 'f-1', file_name: '招标控制价.pdf', status: 'success', progress: 100, message: '处理完成', item_count: 86, block_count: 32, created_at: '2026-06-02T14:00:00Z', updated_at: '2026-06-02T14:25:00Z' },
+      { id: 'd-3', folder_id: 'f-1', file_name: '投标须知.doc', status: 'extracting', progress: 60, message: '正在提取文本', item_count: 0, created_at: '2026-06-20T09:00:00Z', updated_at: '2026-06-20T09:10:00Z' },
+      { id: 'd-4', folder_id: 'f-2', file_name: '施工技术方案.md', status: 'success', progress: 100, message: '处理完成', item_count: 54, block_count: 22, created_at: '2026-06-03T11:00:00Z', updated_at: '2026-06-03T11:20:00Z' },
+      { id: 'd-5', folder_id: 'f-2', file_name: '安全施工规程.wps', status: 'error', progress: 30, message: '文件格式不支持', item_count: 0, error: '不支持的文档格式', created_at: '2026-06-04T08:00:00Z', updated_at: '2026-06-04T08:05:00Z' },
+    ];
+    const delay = (ms = 200) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+    const newId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+    return {
+      list: async () => {
+        await delay();
+        return { folders: mockFolders.map((f) => ({ ...f })), documents: mockDocuments.map((d) => ({ ...d })) };
+      },
+      createFolder: async (name: string) => {
+        await delay();
+        const now = new Date().toISOString();
+        const folder = { id: newId('f'), name: String(name).trim(), sort_order: mockFolders.length, created_at: now, updated_at: now };
+        mockFolders.push(folder);
+        return folder;
+      },
+      renameFolder: async (folderId: string, name: string) => {
+        await delay();
+        const target = mockFolders.find((f) => f.id === folderId);
+        if (!target) return null;
+        target.name = String(name).trim();
+        target.updated_at = new Date().toISOString();
+        return { ...target };
+      },
+      deleteFolder: async (folderId: string) => {
+        await delay();
+        const idx = mockFolders.findIndex((f) => f.id === folderId);
+        if (idx < 0) return { success: false, message: '文件夹不存在' };
+        mockFolders.splice(idx, 1);
+        for (let i = mockDocuments.length - 1; i >= 0; i--) {
+          if (mockDocuments[i].folder_id === folderId) mockDocuments.splice(i, 1);
+        }
+        return { success: true, message: '文件夹已删除' };
+      },
+      uploadDocuments: async (folderId: string) => {
+        await delay(500);
+        const folder = mockFolders.find((f) => f.id === folderId);
+        if (!folder) return { success: false, message: '文件夹不存在' };
+        const now = new Date().toISOString();
+        const newDoc = {
+          id: newId('d'),
+          folder_id: folderId,
+          file_name: `新文档_${Math.random().toString(36).slice(2, 5)}.docx`,
+          status: 'success' as KbStatus,
+          progress: 100,
+          message: '处理完成',
+          item_count: Math.floor(Math.random() * 50) + 10,
+          block_count: Math.floor(Math.random() * 20) + 5,
+          created_at: now,
+          updated_at: now,
+        };
+        mockDocuments.push(newDoc);
+        return { success: true, message: '文档上传成功', documents: [newDoc] };
+      },
+      deleteDocument: async (documentId: string) => {
+        await delay();
+        const idx = mockDocuments.findIndex((d) => d.id === documentId);
+        if (idx < 0) return { success: false, message: '文档不存在' };
+        mockDocuments.splice(idx, 1);
+        return { success: true, message: '文档已删除' };
+      },
+      onEvent: (_callback: (event: any) => void) => {
+        return () => {};
+      },
+    };
+  })(),
 
   tasks: {
     startBidAnalysis: async (payload: unknown): Promise<unknown> => {

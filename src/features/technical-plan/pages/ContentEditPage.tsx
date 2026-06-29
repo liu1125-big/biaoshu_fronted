@@ -339,6 +339,7 @@ function ContentEditPage({
   onContentGenerationOptionsChange,
   onContentSaved,
 }: ContentEditPageProps) {
+  useEffect(() => { document.title = '内容编辑'; }, []);
   const { showToast } = useToast();
   const leaves = useMemo(() => outlineData?.outline ? collectLeafItems(outlineData.outline) : [], [outlineData]);
   const [selectedItemId, setSelectedItemId] = useState('');

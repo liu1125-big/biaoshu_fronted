@@ -207,6 +207,7 @@ function OutlineEditPage({
   onOutlineSaved,
   onSortGuardChange,
 }: OutlineEditPageProps) {
+  useEffect(() => { document.title = '大纲编辑'; }, []);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);

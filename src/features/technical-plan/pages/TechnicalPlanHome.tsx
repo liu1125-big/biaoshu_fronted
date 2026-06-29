@@ -127,6 +127,7 @@ function updateOutlineItemContent(items: OutlineItem[], itemId: string, content:
 }
 
 function TechnicalPlanHome({ registerLeaveGuard, onBackToProjects }: TechnicalPlanHomeProps) {
+  useEffect(() => { document.title = '标书生成'; }, []);
   const { hydrated, state, setState } = useTechnicalPlanWorkflow();
   const { showToast } = useToast();
   const [demoMode, setDemoMode] = useState(() => {
