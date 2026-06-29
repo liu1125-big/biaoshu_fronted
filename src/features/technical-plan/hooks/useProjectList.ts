@@ -1,119 +1,82 @@
-import { useCallback, useEffect, useState } from 'react';
-import { apiClient } from '../../../shared/api/apiClient';
-import type {
-  Project,
-  ProjectListResult,
-  ProjectMutationResult,
-} from '../types';
+import { useCallback, useState } from 'react';
+import type { Project } from '../types';
+
+// Mock 数据
+const mockProjects: Project[] = [
+  {
+    id: '1',
+    name: 'XX 公路工程标书',
+    status: 'in-progress',
+    created_at: '2024-01-15 10:30:00',
+    updated_at: '2024-01-20 14:22:00',
+    tender_file_name: '招标文件.docx',
+    outline_section_count: 8,
+    content_word_count: 12500,
+  },
+  {
+    id: '2',
+    name: '智慧城市建设项目',
+    status: 'draft',
+    created_at: '2024-01-18 09:00:00',
+    updated_at: '2024-01-18 09:00:00',
+  },
+];
 
 interface UseProjectListOptions {
-  showToast: (message: string, type: 'success' | 'error' | 'info') => void;
+  showToast?: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
-export function useProjectList({ showToast }: UseProjectListOptions) {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useProjectList({ showToast }: UseProjectListOptions = {}) {
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const applyList = useCallback((data: ProjectListResult) => {
-    if (data && Array.isArray(data.projects)) {
-      setProjects(data.projects);
-    }
-  }, []);
 
   const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.projects.list();
-      if (data && typeof data === 'object' && Array.isArray(data.projects)) {
-        applyList(data);
-      }
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : '读取项目列表失败', 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [applyList, showToast]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  const upsertProject = useCallback((project: Project) => {
-    setProjects((prev) => {
-      const idx = prev.findIndex((p) => p.id === project.id);
-      if (idx < 0) return [...prev, project];
-      const next = prev.slice();
-      next[idx] = project;
-      return next;
-    });
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 300));
+    setProjects(mockProjects);
+    setLoading(false);
   }, []);
 
   const create = useCallback(async (name: string): Promise<Project | null> => {
-    try {
-      setCreating(true);
-      const result: ProjectMutationResult = await apiClient.projects.create(name);
-      if (!result?.success || !result.project) {
-        showToast(result?.message || '新建项目失败', 'error');
-        return null;
-      }
-      upsertProject(result.project);
-      showToast(result.message || '项目已创建', 'success');
-      return result.project;
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : '新建项目失败', 'error');
-      return null;
-    } finally {
-      setCreating(false);
-    }
-  }, [showToast, upsertProject]);
+    if (!name.trim()) return null;
+    setCreating(true);
+    await new Promise((r) => setTimeout(r, 200));
+    const newProject: Project = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      status: 'draft',
+      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
+      updated_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
+    };
+    setProjects((prev) => [...prev, newProject]);
+    setCreating(false);
+    return newProject;
+  }, []);
 
   const rename = useCallback(async (id: string, name: string): Promise<Project | null> => {
-    try {
-      setRenamingId(id);
-      const result: ProjectMutationResult = await apiClient.projects.rename(id, name);
-      if (!result?.success || !result.project) {
-        showToast(result?.message || '重命名失败', 'error');
-        return null;
-      }
-      upsertProject(result.project);
-      showToast(result.message || '项目已重命名', 'success');
-      return result.project;
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : '重命名失败', 'error');
-      return null;
-    } finally {
-      setRenamingId(null);
-    }
-  }, [showToast, upsertProject]);
+    if (!name.trim()) return null;
+    setProjects((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, name: name.trim(), updated_at: new Date().toISOString().replace('T', ' ').slice(0, 19) }
+          : p
+      )
+    );
+    return projects.find((p) => p.id === id) || null;
+  }, [projects]);
 
   const remove = useCallback(async (id: string): Promise<boolean> => {
-    try {
-      setDeletingId(id);
-      const result: ProjectMutationResult = await apiClient.projects.delete(id);
-      if (!result?.success) {
-        showToast(result?.message || '删除失败', 'error');
-        return false;
-      }
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-      showToast(result.message || '项目已删除', 'success');
-      return true;
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : '删除失败', 'error');
-      return false;
-    } finally {
-      setDeletingId(null);
-    }
-  }, [showToast]);
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    return true;
+  }, []);
 
   return {
     projects,
     loading,
     creating,
-    renamingId,
-    deletingId,
+    renamingId: null,
+    deletingId: null,
     load,
     create,
     rename,

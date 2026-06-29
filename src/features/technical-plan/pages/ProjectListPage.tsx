@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react';  // 项目列表页
 import * as Dialog from '@radix-ui/react-dialog';
 import { trackPageView } from '../../../shared/analytics/analytics';
 import { useToast } from '../../../shared/ui';
@@ -9,14 +9,14 @@ interface ProjectListPageProps {
   onSelect: (project: Project) => void;
 }
 
-const statusLabels: Record<ProjectStatus, string> = {
+const statusLabels: Record<ProjectStatus, string> = {  // 状态标签映射
   draft: '草稿',
   'in-progress': '进行中',
   completed: '已完成',
   archived: '已归档',
 };
 
-function formatDateTime(value?: string) {
+function formatDateTime(value?: string) {  // 日期格式化函数
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
@@ -29,14 +29,14 @@ interface CreateDialogState {
   name: string;
 }
 
-function ProjectListPage({ onSelect }: ProjectListPageProps) {
+function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
   const { showToast } = useToast();
   const list = useProjectList({ showToast });
   const [createDialog, setCreateDialog] = useState<CreateDialogState>({ open: false, name: '' });
   const [renameTarget, setRenameTarget] = useState<Project | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
-  const openCreate = () => {
+  const openCreate = () => {  // 新建项目对话框逻辑
     setCreateDialog({ open: true, name: '' });
   };
 
@@ -58,7 +58,7 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {
     }
   };
 
-  const startRename = (project: Project) => {
+  const startRename = (project: Project) => {  // 重命名逻辑
     setRenameTarget(project);
     setRenameValue(project.name);
   };
@@ -77,14 +77,14 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {
     }
   };
 
-  const confirmDelete = async (project: Project) => {
+  const confirmDelete = async (project: Project) => {  // 删除确认
     if (!window.confirm(`确定删除项目"${project.name}"吗？`)) return;
     await list.remove(project.id);
   };
 
-  trackPageView('technical-plan/project-list');
+  trackPageView('technical-plan/project-list');  // 页面埋点
 
-  return (
+  return (  // UI 渲染
     <>
       <div className="page-stack project-list-page">
         <section className="project-list-workspace-bar">

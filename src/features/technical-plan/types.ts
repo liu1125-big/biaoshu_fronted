@@ -1,189 +1,10 @@
-import type { OutlineData, OutlineMode } from '../../shared/types';
+// ============== 基础类型 ==============
 
 export type TechnicalPlanStep = 'document-analysis' | 'bid-analysis' | 'outline-generation' | 'content-edit';
 export type BidAnalysisMode = 'key' | 'full' | 'custom';
-export type BidAnalysisTaskStatus = 'idle' | 'running' | 'success' | 'error';
-export type BackgroundTaskType = 'bid-analysis' | 'outline-generation' | 'content-generation';
-export type BackgroundTaskStatus = 'running' | 'pausing' | 'paused' | 'success' | 'error';
-export type ContentGenerationSectionStatus = 'idle' | 'running' | 'success' | 'error';
-export type ContentTableRequirement = 'none' | 'light' | 'moderate' | 'heavy';
-export type ConsistencyRepairMode = 'agent' | 'normal';
-export type SaveOutlineReason = 'sort' | 'edit' | 'delete' | 'add-root' | 'add-child' | 'replace';
-
-export interface SaveOutlineRequest {
-  outlineData: OutlineData;
-  reason: SaveOutlineReason;
-  idMap?: Record<string, string>;
-  affectedNodeIds?: string[];
-}
-
-export interface ContentGenerationOptions {
-  useAiImages: boolean;
-  maxAiImages: number;
-  useMermaidImages: boolean;
-  tableRequirement: ContentTableRequirement;
-  enableConsistencyAudit: boolean;
-  consistencyRepairMode: ConsistencyRepairMode;
-}
-
-export interface ContentImageStats {
-  planned: number;
-  attempted: number;
-  success: number;
-  failed: number;
-  skipped: number;
-}
-
-export interface BackgroundTaskState {
-  task_id: string;
-  type: BackgroundTaskType;
-  status: BackgroundTaskStatus;
-  progress: number;
-  logs: string[];
-  started_at: string;
-  updated_at: string;
-  error?: string;
-  stats?: {
-    content?: {
-      phase: 'planning' | 'generating' | 'auditing' | 'table-cleaning' | 'illustrating' | 'done';
-      planning_total: number;
-      planning_completed: number;
-      generation_total: number;
-      generation_completed: number;
-      audit_group_total?: number;
-      audit_group_completed?: number;
-      audit_conflict_total?: number;
-      audit_fix_total?: number;
-      audit_fix_completed?: number;
-      audit_fix_failed?: number;
-      audit_repair_mode?: ConsistencyRepairMode | '';
-      audit_agent_step_total?: number;
-      audit_agent_step_completed?: number;
-      audit_agent_step_label?: string;
-      audit_agent_changed_sections?: number;
-      audit_agent_failed_sections?: number;
-      table_cleanup_total?: number;
-      table_cleanup_completed?: number;
-      table_cleanup_rewritten?: number;
-      table_cleanup_skipped?: number;
-      illustration_total?: number;
-      illustration_completed?: number;
-    };
-    images?: Partial<ContentImageStats> & {
-      total?: ContentImageStats;
-      ai?: ContentImageStats;
-      mermaid?: ContentImageStats;
-    };
-  };
-}
-
-export interface BidAnalysisTaskState {
-  id: string;
-  label: string;
-  status: BidAnalysisTaskStatus;
-  content: string;
-  error?: string;
-}
-
-export type BidAnalysisTasks = Record<string, BidAnalysisTaskState>;
-
-export interface ContentGenerationSectionState {
-  id: string;
-  title: string;
-  status: ContentGenerationSectionStatus;
-  content: string;
-  error?: string;
-  updated_at?: string;
-}
-
-export type ContentGenerationSections = Record<string, ContentGenerationSectionState>;
-
-export type ContentIllustrationType = 'ai' | 'mermaid' | 'none';
-
-export interface ContentGenerationPlanData {
-  writing_focus?: string;
-  knowledge: {
-    item_ids: string[];
-  };
-  facts: {
-    titles: string[];
-  };
-  table: {
-    needed: boolean;
-    purpose: string;
-  };
-  mermaid: {
-    needed: boolean;
-    title: string;
-    code: string;
-    priority: number;
-    reason: string;
-  };
-  image: {
-    needed: boolean;
-    style: 'engineering_diagram' | 'realistic_photo' | '';
-    title: string;
-    prompt: string;
-    priority: number;
-    reason: string;
-  };
-}
-
-export interface ContentGenerationPlanState {
-  plan: ContentGenerationPlanData;
-  illustration_type: ContentIllustrationType;
-  table_requirement?: 'none' | 'light' | 'moderate' | 'heavy';
-  updated_at?: string;
-}
-
-export type ContentGenerationPlans = Record<string, ContentGenerationPlanState>;
-
-export interface ContentGenerationRuntimeState {
-  phase?: string;
-  touched_item_ids?: string[];
-  expansion_cycle_item_ids?: string[];
-  expansion_attempted_item_ids?: string[];
-  expansion_cycle_start_words?: number;
-  target_item_id?: string;
-  regenerate_requirement?: string;
-  updated_at?: string;
-}
-
-export interface TechnicalPlanTenderFile {
-  fileName: string;
-  markdownPath: string;
-  markdownChars: number;
-  contentHash: string;
-  parserLabel?: string;
-  importedAt?: string;
-  selectedSectionId?: string;
-  selectedSectionTitle?: string;
-  selectedSectionHeadLine?: string;
-  updatedAt: string;
-}
-
-export interface TechnicalPlanState {
-  step: TechnicalPlanStep;
-  tenderFile: TechnicalPlanTenderFile | null;
-  projectOverview: string;
-  techRequirements: string;
-  bidAnalysisMode: BidAnalysisMode;
-  bidAnalysisSelectedTaskIds: string[];
-  bidAnalysisTasks: BidAnalysisTasks;
-  bidAnalysisProgress: number;
-  outlineMode: OutlineMode;
-  referenceKnowledgeDocumentIds: string[];
-  bidAnalysisTask?: BackgroundTaskState;
-  outlineGenerationTask?: BackgroundTaskState;
-  contentGenerationTask?: BackgroundTaskState;
-  contentGenerationOptions?: ContentGenerationOptions;
-  contentGenerationSections: ContentGenerationSections;
-  contentGenerationPlans: ContentGenerationPlans;
-  contentGenerationRuntime?: ContentGenerationRuntimeState;
-  outlineData: OutlineData | null;
-}
-
 export type ProjectStatus = 'draft' | 'in-progress' | 'completed' | 'archived';
+
+// ============== 项目相关 ==============
 
 export interface Project {
   id: string;
@@ -196,6 +17,44 @@ export interface Project {
   content_word_count?: number;
 }
 
+// ============== 投标分析任务 ==============
+
+export interface BidAnalysisTaskDefinition {
+  id: string;
+  label: string;
+  description: string;
+  required: boolean;
+  output: 'markdown' | 'json';
+}
+
+export type BidAnalysisTasks = Record<string, BidAnalysisTaskState>;
+
+export interface BidAnalysisTaskState {
+  id: string;
+  label: string;
+  status: 'idle' | 'running' | 'success' | 'error';
+  content: string;
+  error?: string;
+}
+
+// ============== 大纲相关 ==============
+
+export interface OutlineItem {
+  id: string;
+  title: string;
+  description: string;
+  children?: OutlineItem[];
+  content?: string;
+  source_requirement_title?: string;
+}
+
+export interface OutlineData {
+  project_name: string;
+  outline: OutlineItem[];
+}
+
+// ============== API 返回类型（被其他模块引用）==============
+
 export interface ProjectListResult {
   success: boolean;
   message?: string;
@@ -206,4 +65,96 @@ export interface ProjectMutationResult {
   success: boolean;
   message?: string;
   project?: Project;
+}
+
+export interface ContentGenerationSectionState {
+  id: string;
+  title: string;
+  status: 'idle' | 'running' | 'success' | 'error';
+  content: string;
+  error?: string;
+  updated_at?: string;
+}
+
+export interface ContentGenerationPlanData {
+  writing_focus?: string;
+  knowledge: { item_ids: string[] };
+  facts: { titles: string[] };
+  table: { needed: boolean; purpose: string };
+  mermaid: { needed: boolean; title: string; code: string; priority: number; reason: string };
+  image: { needed: boolean; style: string; title: string; prompt: string; priority: number; reason: string };
+}
+
+export interface ContentGenerationPlanState {
+  plan: ContentGenerationPlanData;
+  illustration_type: 'ai' | 'mermaid' | 'none';
+  table_requirement?: 'none' | 'light' | 'moderate' | 'heavy';
+  updated_at?: string;
+}
+
+export interface ContentGenerationRuntimeState {
+  phase?: string;
+  touched_item_ids?: string[];
+  expansion_cycle_item_ids?: string[];
+  expansion_attempted_item_ids?: string[];
+  expansion_cycle_start_words?: number;
+  target_item_id?: string;
+  regenerate_requirement?: string;
+  updated_at?: string;
+}
+
+// ============== 页面 Props ==============
+
+export interface DocumentAnalysisPageProps {
+  tenderFile: { fileName: string; markdownChars: number } | null;
+  tenderMarkdown: string;
+  onFileImported?: (state: { tenderFile: { fileName: string; markdownChars: number } }, markdown: string) => void;
+  onStateChange?: (state: Partial<TechnicalPlanState>) => void;
+}
+
+export interface BidAnalysisPageProps {
+  hasTenderFile: boolean;
+  mode: BidAnalysisMode;
+  selectedTaskIds: string[];
+  tasks: BidAnalysisTasks;
+  progress?: number;
+  onProgressChange?: (progress: number) => void;
+  onConfigSaved?: (state: Partial<TechnicalPlanState>) => void;
+}
+
+export interface OutlineEditPageProps {
+  projectOverview: string;
+  techRequirements: string;
+  outlineData: OutlineData | null;
+  onOutlineChange?: (data: OutlineData) => void;
+  onSortGuardChange?: (guard: { hasUnsavedSort: () => boolean; saveSort: () => Promise<void>; discardSort: () => void } | null) => void;
+}
+
+export interface ContentEditPageProps {
+  outlineData: OutlineData | null;
+  sections?: Record<string, { content: string; status: string }>;
+  onContentSaved?: (item: OutlineItem, content: string) => void;
+  onContentGenerationOptionsChange?: (options: ContentGenerationOptions) => void;
+}
+
+export interface ContentGenerationOptions {
+  useAiImages: boolean;
+  maxAiImages: number;
+  useMermaidImages: boolean;
+  tableRequirement: 'none' | 'light' | 'moderate' | 'heavy';
+  enableConsistencyAudit: boolean;
+  consistencyRepairMode: 'agent' | 'normal';
+}
+
+// ============== 简化后的完整状态 ==============
+
+export interface TechnicalPlanState {
+  step: TechnicalPlanStep;
+  tenderFile: { fileName: string; markdownChars: number } | null;
+  projectOverview: string;
+  techRequirements: string;
+  bidAnalysisMode: BidAnalysisMode;
+  bidAnalysisSelectedTaskIds: string[];
+  bidAnalysisTasks: BidAnalysisTasks;
+  outlineData: OutlineData | null;
 }

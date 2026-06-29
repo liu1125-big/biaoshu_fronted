@@ -1,30 +1,27 @@
 import axios from 'axios';
 import { ENDPOINTS } from './endpoints';
-import type { TaskEvent, WordExportProgressEvent, WordExportResult } from '../types/ipc';
-import type { ClientConfig, ConfigSaveResult } from '../types/config';
-import type { ChatCompletionRequest, JsonCompletionRequest } from '../types/ai';
 import type { Project, ProjectListResult, ProjectMutationResult } from '../../features/technical-plan/types';
 
 const http = axios.create({ timeout: 300000 });
 
 export const apiClient = {
   config: {
-    load: async (): Promise<ClientConfig> => {
+    load: async (): Promise<unknown> => {
       const { data } = await http.get(ENDPOINTS.CONFIG_LOAD);
       return data;
     },
-    save: async (config: ClientConfig): Promise<ConfigSaveResult> => {
+    save: async (config: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.CONFIG_SAVE, config);
       return data;
     },
   },
 
   ai: {
-    chat: async (request: ChatCompletionRequest): Promise<string> => {
+    chat: async (request: unknown): Promise<string> => {
       const { data } = await http.post(ENDPOINTS.AI_CHAT, request);
       return data.content || data;
     },
-    requestJson: async <TResult = unknown>(request: JsonCompletionRequest): Promise<TResult> => {
+    requestJson: async <TResult = unknown>(request: unknown): Promise<TResult> => {
       const { data } = await http.post(ENDPOINTS.AI_REQUEST_JSON, request);
       return data;
     },
@@ -38,19 +35,19 @@ export const apiClient = {
   },
 
   technicalPlan: {
-    loadState: async (): Promise<any> => {
+    loadState: async (): Promise<unknown> => {
       const { data } = await http.get(ENDPOINTS.TECHNICAL_PLAN_LOAD_STATE);
       return data;
     },
-    importTenderDocument: async (formData: FormData): Promise<any> => {
+    importTenderDocument: async (formData: FormData): Promise<unknown> => {
       const { data } = await http.post(ENDPOINTS.TECHNICAL_PLAN_IMPORT_TENDER, formData);
       return data;
     },
-    selectBidSection: async (selectedSection: any): Promise<any> => {
+    selectBidSection: async (selectedSection: unknown): Promise<unknown> => {
       const { data } = await http.post(ENDPOINTS.TECHNICAL_PLAN_SELECT_BID_SECTION, { selectedSection });
       return data;
     },
-    cancelBidSectionSelection: async (): Promise<any> => {
+    cancelBidSectionSelection: async (): Promise<unknown> => {
       const { data } = await http.post(ENDPOINTS.TECHNICAL_PLAN_CANCEL_BID_SECTION);
       return data;
     },
@@ -58,35 +55,35 @@ export const apiClient = {
       const { data } = await http.get(ENDPOINTS.TECHNICAL_PLAN_READ_TENDER_MARKDOWN);
       return data.markdown || data;
     },
-    updateStep: async (step: any): Promise<any> => {
+    updateStep: async (step: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_UPDATE_STEP, { step });
       return data;
     },
-    saveBidAnalysisConfig: async (payload: any): Promise<any> => {
+    saveBidAnalysisConfig: async (payload: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_SAVE_BID_ANALYSIS_CONFIG, payload);
       return data;
     },
-    saveOutlineConfig: async (payload: any): Promise<any> => {
+    saveOutlineConfig: async (payload: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_SAVE_OUTLINE_CONFIG, payload);
       return data;
     },
-    saveOutline: async (payload: any): Promise<any> => {
+    saveOutline: async (payload: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_SAVE_OUTLINE, payload);
       return data;
     },
-    saveContentGenerationOptions: async (options: any): Promise<any> => {
+    saveContentGenerationOptions: async (options: unknown): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_SAVE_CONTENT_OPTIONS, options);
       return data;
     },
-    saveChapterContent: async (payload: { nodeId: string; content: string }): Promise<any> => {
+    saveChapterContent: async (payload: { nodeId: string; content: string }): Promise<unknown> => {
       const { data } = await http.put(ENDPOINTS.TECHNICAL_PLAN_SAVE_CHAPTER_CONTENT, payload);
       return data;
     },
-    clear: async (): Promise<any> => {
+    clear: async (): Promise<unknown> => {
       const { data } = await http.post(ENDPOINTS.TECHNICAL_PLAN_CLEAR);
       return data;
     },
-    onParseEvent: (callback: (event: any) => void): (() => void) => {
+    onParseEvent: (callback: (event: unknown) => void): (() => void) => {
       let closed = false;
       const eventSource = new EventSource(ENDPOINTS.TECHNICAL_PLAN_TENDER_EVENTS);
       eventSource.onmessage = (msg) => {
@@ -184,7 +181,8 @@ export const apiClient = {
         mockDocuments.splice(idx, 1);
         return { success: true, message: '文档已删除' };
       },
-      onEvent: (_callback: (event: any) => void) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onEvent: (_callback: (arg: any) => void) => {
         return () => {};
       },
     };
@@ -211,7 +209,7 @@ export const apiClient = {
       const { data } = await http.get(ENDPOINTS.TASKS_EVENTS);
       return data;
     },
-    onTaskEvent: <TState = unknown>(callback: (event: TaskEvent<TState>) => void): (() => void) => {
+    onTaskEvent: <TState = unknown>(callback: (event: TState) => void): (() => void) => {
       const eventSource = new EventSource(ENDPOINTS.TASKS_EVENTS);
       eventSource.onmessage = (msg) => {
         try {
@@ -227,11 +225,11 @@ export const apiClient = {
   },
 
   export: {
-    exportWord: async (payload: unknown): Promise<WordExportResult> => {
+    exportWord: async (payload: unknown): Promise<unknown> => {
       const { data } = await http.post(ENDPOINTS.EXPORT_WORD, payload);
       return data;
     },
-    onWordExportProgress: (callback: (event: WordExportProgressEvent) => void): (() => void) => {
+    onWordExportProgress: (callback: (event: unknown) => void): (() => void) => {
       const eventSource = new EventSource(ENDPOINTS.EXPORT_WORD_PROGRESS);
       eventSource.onmessage = (msg) => {
         try {
@@ -246,7 +244,6 @@ export const apiClient = {
     },
   },
 
-  // ── 项目管理（占位 stub，使用内存 mock，后端就绪后切换为真实 HTTP 调用）──
   projects: (() => {
     const mockStore: Project[] = [
       {

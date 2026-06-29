@@ -1,6 +1,4 @@
 export { default as FloatingToolbar } from './FloatingToolbar';
-export { default as MarkdownEditor } from './MarkdownEditor';
-export type { MarkdownEditorProps } from './MarkdownEditor';
 export type {
   FloatingToolbarAction,
   FloatingToolbarActionVariant,
@@ -21,3 +19,5 @@ export {
   useDocumentParseNotice,
 } from './DocumentParseNoticeProvider';
 export { default as MarkdownRenderer } from './MarkdownRenderer';
+export { default as MarkdownEditor } from './MarkdownEditor';
+export type { MarkdownEditorProps } from './MarkdownEditor';
