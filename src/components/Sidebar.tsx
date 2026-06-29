@@ -4,12 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { appMenuItems } from '../app/menuConfig';
 import type { AppMenuItem, SectionId } from '../shared/types/navigation';
 import { useToast } from '../shared/ui';
-import { ArchiveIcon, ChevronIcon, DocumentIcon } from '../shared/ui/Icons';
+import { ArchiveIcon, ChevronIcon, DocumentIcon, ShieldIcon } from '../shared/ui/Icons';
 import logoUrl from '/icon_256.png';
 
 const navigationIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   'technical-plan': DocumentIcon,
   'knowledge-base': ArchiveIcon,
+  anonymous: ShieldIcon,
 };
 
 function Sidebar() {

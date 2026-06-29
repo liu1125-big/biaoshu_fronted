@@ -49,9 +49,11 @@ function KnowledgeBasePage() {
       {/* 顶栏 */}
       <section className="knowledge-workspace-bar">
         <div className="knowledge-breadcrumb">
-          <span>知识库</span>
-          <strong>{kb.activeFolder?.name || '未选择文件夹'}</strong>
-          <small>{kb.index.folders.length} 个文件夹 / {kb.index.documents.length} 个文档</small>
+          <strong className="knowledge-breadcrumb-title">文档知识库</strong>
+          <div className="knowledge-breadcrumb-desc">
+            <span>管理文档资料、案例素材</span>
+            <small>{kb.index.folders.length} 个文件夹 / {kb.index.documents.length} 个文档</small>
+          </div>
         </div>
         <div className="knowledge-toolbar-actions">
           <button type="button" className="secondary-action" onClick={() => kb.setShowCreateFolder((v) => !v)} disabled={kb.listLoading}>

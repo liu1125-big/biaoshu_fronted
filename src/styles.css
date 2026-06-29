@@ -7991,8 +7991,8 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.88);
+  padding: 28px 24px;
+  background: #fff;
   border: 1px solid var(--yb-border-soft);
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(33, 116, 253, 0.08);
@@ -8000,9 +8000,31 @@ button {
 
 .knowledge-breadcrumb {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
+}
+
+.knowledge-breadcrumb-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--yb-text);
+}
+
+.knowledge-breadcrumb-subtitle {
+  font-size: 13px;
+  color: var(--yb-text-muted);
+}
+
+.knowledge-breadcrumb-desc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.knowledge-breadcrumb small {
+  color: var(--yb-text-muted);
+  font-size: 12px;
 }
 
 .knowledge-breadcrumb span {
@@ -10071,3 +10093,175 @@ button {
   }
 }
 
+/* 匿名化工具页面 */
+.anonymous-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.anonymous-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.anonymous-config-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--yb-border-soft);
+  border-radius: 18px;
+}
+
+.anonymous-upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  padding: 12px;
+  border: 2px dashed var(--yb-border-soft);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.anonymous-upload-area:hover {
+  border-color: var(--yb-primary);
+  background: var(--yb-bg-soft);
+}
+
+.anonymous-upload-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--yb-text-muted);
+}
+
+.anonymous-upload-hint strong {
+  color: var(--yb-primary);
+  font-size: 14px;
+}
+
+.anonymous-upload-hint small {
+  font-size: 12px;
+}
+
+.anonymous-file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.anonymous-file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--yb-primary);
+  border-radius: 8px;
+}
+
+.anonymous-file-info strong {
+  display: block;
+  font-size: 13px;
+  color: var(--yb-text);
+}
+
+.anonymous-file-info small {
+  font-size: 12px;
+  color: var(--yb-text-muted);
+}
+
+.anonymous-options {
+  flex: 1;
+  overflow: auto;
+}
+
+.anonymous-options-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--yb-text-muted);
+}
+
+.anonymous-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.anonymous-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--yb-bg-soft);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.anonymous-option:hover {
+  background: #e8edf6;
+}
+
+.anonymous-option.is-enabled {
+  background: #e8f0ff;
+}
+
+.anonymous-option input {
+  margin-top: 2px;
+}
+
+.anonymous-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.anonymous-option-info strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--yb-text);
+}
+
+.anonymous-option-info small {
+  font-size: 12px;
+  color: var(--yb-text-muted);
+}
+
+.anonymous-start-btn {
+  width: 100%;
+  height: 40px;
+  margin-top: auto;
+}
+
+.anonymous-preview-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--yb-border-soft);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.anonymous-markdown-content {
+  padding: 16px 20px;
+  overflow: auto;
+}

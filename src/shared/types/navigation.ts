@@ -1,7 +1,8 @@
 export type SectionId =
   | 'technical-plan'
   | 'knowledge-base'
-  | 'document-knowledge-base';
+  | 'document-knowledge-base'
+  | 'anonymous';
 
 export interface AppMenuNotice {
   message: string;
@@ -21,6 +22,7 @@ export interface AppMenuItem {
   id: SectionId;
   label: string;
   description: string;
+  icon?: 'document' | 'expand' | 'briefcase' | 'compare' | 'shield' | 'code' | 'prompt' | 'file' | 'export' | 'tool';
   children?: AppSubMenuItem[];
   notice?: AppMenuNotice;
 }

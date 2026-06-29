@@ -18,4 +18,10 @@ export const appMenuItems: AppMenuItem[] = [
       },
     ],
   },
+  {
+    id: 'anonymous',
+    label: '匿名化工具',
+    description: '文档敏感信息脱敏处理',
+    icon: 'shield',
+  },
 ];
