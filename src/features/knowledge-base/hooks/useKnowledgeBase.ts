@@ -19,7 +19,6 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
   const [newFolderName, setNewFolderName] = useState('');
   const [creatingFolder, setCreatingFolder] = useState(false);
   const documentParseNoticeIdsRef = useRef(new Set<string>());
-  const loadInitialDataRef = useRef<(() => void) | undefined>(undefined);
 
   const activeFolder = index.folders.find((folder) => folder.id === activeFolderId) || index.folders[0];
 
@@ -62,8 +61,6 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
       setListLoading(false);
     }
   }, [showToast]);
-
-  loadInitialDataRef.current = loadInitialData;
 
   const createFolder = useCallback(async () => {
     const name = newFolderName.trim();

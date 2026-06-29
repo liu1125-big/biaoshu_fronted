@@ -1,4 +1,3 @@
-import type { BidAnalysisMode } from '../types';
 
 export interface BidAnalysisTaskDefinition {
   id: string;
@@ -29,6 +28,3 @@ export const bidAnalysisTasks: BidAnalysisTaskDefinition[] = [
   { id: 'terminationCondition', label: '合同解除和终止', description: '违约解除、不可抗力、合同终止和争议解决。', required: false, output: 'json' },
 ];
 
-export function getBidAnalysisTasks(mode: BidAnalysisMode) {
-  return mode === 'full' ? bidAnalysisTasks : bidAnalysisTasks.filter((task) => task.required);
-}

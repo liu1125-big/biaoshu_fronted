@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { MarkdownEditor, MarkdownRenderer } from '../../../shared/ui';
+import { collectLeaves } from '../../../shared/utils/tree';
 import type { ContentEditPageProps } from '../types';
 
 const statusLabels: Record<string, string> = {
@@ -22,14 +23,7 @@ const mockContents: Record<string, string> = {
 function ContentEditPage({ outlineData, sections }: ContentEditPageProps) {
   const outline = outlineData?.outline || [];
 
-  const leaves = useMemo(() => {
-    const collect = (items: typeof outline): typeof outline => {
-      return items.flatMap((item) =>
-        item.children?.length ? collect(item.children) : [item]
-      );
-    };
-    return collect(outline);
-  }, [outline]);
+  const leaves = useMemo(() => collectLeaves(outline), [outline]);
 
   const [selectedItemId, setSelectedItemId] = useState<string>('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);

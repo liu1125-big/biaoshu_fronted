@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Project } from '../types';
+import type { Project, ProjectStatus } from '../types';
 
 // Mock 数据
 const mockProjects: Project[] = [
@@ -19,6 +19,16 @@ const mockProjects: Project[] = [
     status: 'draft',
     created_at: '2024-01-18 09:00:00',
     updated_at: '2024-01-18 09:00:00',
+  },
+  {
+    id: '3',
+    name: 'ai标书生成项目',
+    status: 'in-progress',
+    created_at: '2024-01-15 10:30:00',
+    updated_at: '2024-01-20 14:22:00',
+    tender_file_name: '项目招标文件.docx',
+    outline_section_count: 18,
+    content_word_count: 10086,
   },
 ];
 
@@ -71,15 +81,25 @@ export function useProjectList({ showToast }: UseProjectListOptions = {}) {
     return true;
   }, []);
 
+  const updateStatus = useCallback(async (id: string, status: ProjectStatus): Promise<Project | null> => {
+    setProjects((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, status, updated_at: new Date().toISOString().replace('T', ' ').slice(0, 19) }
+          : p
+      )
+    );
+    return projects.find((p) => p.id === id) || null;
+  }, [projects]);
+
   return {
     projects,
     loading,
     creating,
-    renamingId: null,
-    deletingId: null,
     load,
     create,
     rename,
     remove,
+    updateStatus,
   };
 }

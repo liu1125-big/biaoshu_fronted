@@ -1,6 +1,5 @@
 import { useState } from 'react';  // 项目列表页
 import * as Dialog from '@radix-ui/react-dialog';
-import { trackPageView } from '../../../shared/analytics/analytics';
 import { useToast } from '../../../shared/ui';
 import { useProjectList } from '../hooks/useProjectList';
 import type { Project, ProjectStatus } from '../types';
@@ -35,6 +34,29 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
   const [createDialog, setCreateDialog] = useState<CreateDialogState>({ open: false, name: '' });
   const [renameTarget, setRenameTarget] = useState<Project | null>(null);
   const [renameValue, setRenameValue] = useState('');
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | 'all'>('all');
+
+  // 按状态筛选项目
+  const filteredProjects = list.projects.filter(
+    (p) => statusFilter === 'all' || p.status === statusFilter
+  );
+
+  // 统计各状态数量
+  const statusCounts = {
+    all: list.projects.length,
+    draft: list.projects.filter((p) => p.status === 'draft').length,
+    'in-progress': list.projects.filter((p) => p.status === 'in-progress').length,
+    completed: list.projects.filter((p) => p.status === 'completed').length,
+    archived: list.projects.filter((p) => p.status === 'archived').length,
+  };
+
+  const statusTabs: Array<{ id: ProjectStatus | 'all'; label: string }> = [
+    { id: 'all', label: '全部' },
+    { id: 'draft', label: '草稿' },
+    { id: 'in-progress', label: '进行中' },
+    { id: 'completed', label: '已完成' },
+    { id: 'archived', label: '已归档' },
+  ];
 
   const openCreate = () => {  // 新建项目对话框逻辑
     setCreateDialog({ open: true, name: '' });
@@ -82,8 +104,6 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
     await list.remove(project.id);
   };
 
-  trackPageView('technical-plan/project-list');  // 页面埋点
-
   return (  // UI 渲染
     <>
       <div className="page-stack project-list-page">
@@ -100,14 +120,29 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
           </div>
         </section>
 
-        {list.loading && list.projects.length === 0 ? (
+        {/* 状态筛选 Tab */}
+        <div className="project-list-filter-bar">
+          {statusTabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`project-filter-btn${statusFilter === tab.id ? ' is-active' : ''}`}
+              onClick={() => setStatusFilter(tab.id)}
+            >
+              {tab.label}
+              <span className="project-filter-count">{statusCounts[tab.id]}</span>
+            </button>
+          ))}
+        </div>
+
+        {list.loading && filteredProjects.length === 0 ? (
           <div className="knowledge-empty-box large">
             <strong>正在读取项目...</strong>
             <p>项目列表加载完成后会自动显示。</p>
           </div>
-        ) : list.projects.length === 0 ? (
+        ) : filteredProjects.length === 0 ? (
           <div className="knowledge-empty-box large">
-            <strong>还没有项目</strong>
+            <strong>该状态下没有项目</strong>
             <p>点击右上角"新建项目"开始创建一个项目。</p>
             <button type="button" className="primary-action" onClick={openCreate} style={{ marginTop: 16 }}>
               新建项目
@@ -115,10 +150,7 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
           </div>
         ) : (
           <section className="project-card-grid">
-            {list.projects.map((project) => {
-              const deleting = list.deletingId === project.id;
-              const renaming = list.renamingId === project.id;
-              return (
+            {filteredProjects.map((project) => (
                 <article key={project.id} className="project-card" data-status={project.status}>
                   <header className="project-card-head">
                     <div className="project-card-title-row">
@@ -152,7 +184,6 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
                       type="button"
                       className="primary-action"
                       onClick={() => onSelect(project)}
-                      disabled={deleting}
                     >
                       继续编辑
                     </button>
@@ -160,22 +191,27 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
                       type="button"
                       className="secondary-action"
                       onClick={() => startRename(project)}
-                      disabled={renaming || deleting}
                     >
-                      {renaming ? '保存中...' : '重命名'}
+                      重命名
                     </button>
                     <button
                       type="button"
-                      className="is-danger"
-                      onClick={() => void confirmDelete(project)}
-                      disabled={deleting || renaming}
+                      className="secondary-action"
+                      onClick={() => alert('导出功能（待后端实现）')}
                     >
-                      {deleting ? '删除中...' : '删除'}
+                      导出
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-action"
+                      style={{ color: 'red' }}
+                      onClick={() => void confirmDelete(project)}
+                    >
+                      删除
                     </button>
                   </footer>
                 </article>
-              );
-            })}
+              ))}
           </section>
         )}
       </div>
@@ -212,7 +248,7 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
         </Dialog.Portal>
       </Dialog.Root>
 
-      <Dialog.Root open={Boolean(renameTarget)} onOpenChange={(open) => { if (!open && !list.renamingId) setRenameTarget(null); }}>
+      <Dialog.Root open={Boolean(renameTarget)} onOpenChange={(open) => { if (!open) setRenameTarget(null); }}>
         <Dialog.Portal>
           <Dialog.Overlay className="content-regenerate-modal" />
           <Dialog.Content className="project-dialog-card">
@@ -228,15 +264,14 @@ function ProjectListPage({ onSelect }: ProjectListPageProps) {  // 组件状态
                   autoFocus
                   value={renameValue}
                   onChange={(event) => setRenameValue(event.target.value)}
-                  disabled={Boolean(list.renamingId)}
                   onKeyDown={(event) => { if (event.key === 'Enter') void submitRename(); }}
                 />
               </label>
             </div>
             <div className="content-regenerate-actions">
-              <button type="button" className="secondary-action" onClick={() => setRenameTarget(null)} disabled={Boolean(list.renamingId)}>取消</button>
-              <button type="button" className="primary-action" onClick={() => void submitRename()} disabled={Boolean(list.renamingId)}>
-                {list.renamingId ? '保存中...' : '保存'}
+              <button type="button" className="secondary-action" onClick={() => setRenameTarget(null)}>取消</button>
+              <button type="button" className="primary-action" onClick={() => void submitRename()}>
+                保存
               </button>
             </div>
           </Dialog.Content>

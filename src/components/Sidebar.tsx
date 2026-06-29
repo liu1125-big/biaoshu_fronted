@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { appMenuItems } from '../app/menuConfig';
 import type { AppMenuItem, SectionId } from '../shared/types/navigation';
 import { useToast } from '../shared/ui';
+import { ArchiveIcon, ChevronIcon, DocumentIcon } from '../shared/ui/Icons';
 import logoUrl from '/icon_256.png';
 
 const navigationIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
-  'bid-generation': BidGenerationIcon,
   'technical-plan': DocumentIcon,
   'knowledge-base': ArchiveIcon,
 };
@@ -106,70 +106,6 @@ function wrapTooltip(label: string, child: ReactElement) {
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
-  );
-}
-
-function BidGenerationIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M6 5.2h7.2l4.8 4.8v8.8H6z" />
-      <path d="M13 5.5V10h4.5" />
-      <path d="M8.8 13.2h6.4" />
-      <path d="M8.8 16.3h4.5" />
-      <path d="M4.5 7.2v13h12" />
-    </svg>
-  );
-}
-
-function DocumentIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M7 3.75h6.7L18 8.05v12.2H7z" />
-      <path d="M13.5 4v4.35h4.25" />
-      <path d="M9.5 12.2h5" />
-      <path d="M9.5 15.7h4" />
-    </svg>
-  );
-}
-
-function ExpandIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M15 3h6v6" />
-      <path d="M9 21H3v-6" />
-      <path d="M21 3l-7 7" />
-      <path d="M3 21l7-7" />
-    </svg>
-  );
-}
-
-function ExportIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M7 3.75h6.7L18 8.05v12.2H7z" />
-      <path d="M13.5 4v4.35h4.25" />
-      <path d="M9.5 12.2h5" />
-      <path d="M9.5 15.7h4" />
-    </svg>
-  );
-}
-
-function ChevronIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
-      <path d="m14 7-5 5 5 5" />
-    </svg>
-  );
-}
-
-function ArchiveIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M3 7.5v11c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-11" />
-      <path d="M3 7.5l2-3h14l2 3" />
-      <path d="M3 7.5h18" />
-      <path d="M10 11.5h4" />
-    </svg>
   );
 }
 

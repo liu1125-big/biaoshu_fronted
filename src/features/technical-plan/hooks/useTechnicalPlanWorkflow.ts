@@ -14,14 +14,12 @@ const initialState: TechnicalPlanState = {
 
 export function useTechnicalPlanWorkflow() {
   const [state, setState] = useState<TechnicalPlanState>(initialState);
-  const [hydrated] = useState(true);
 
   const switchStep = (step: TechnicalPlanStep) => {
     setState((prev) => ({ ...prev, step }));
   };
 
   return {
-    hydrated,
     state,
     setState,
     switchStep,

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { ENDPOINTS } from './endpoints';
-import type { Project, ProjectListResult, ProjectMutationResult } from '../../features/technical-plan/types';
 
 const http = axios.create({ timeout: 300000 });
 
@@ -243,81 +242,4 @@ export const apiClient = {
       return () => eventSource.close();
     },
   },
-
-  projects: (() => {
-    const mockStore: Project[] = [
-      {
-        id: 'p-1',
-        name: '示例项目 A — XX 公路工程',
-        status: 'in-progress',
-        created_at: '2026-06-01T10:00:00Z',
-        updated_at: '2026-06-20T14:30:00Z',
-        tender_file_name: 'XX公路招标文件.docx',
-        outline_section_count: 6,
-        content_word_count: 0,
-      },
-      {
-        id: 'p-3',
-        name: '示例项目 C — 智慧城市',
-        status: 'completed',
-        created_at: '2026-05-15T08:00:00Z',
-        updated_at: '2026-06-18T16:45:00Z',
-        tender_file_name: '智慧城市招标文件.docx',
-        outline_section_count: 8,
-        content_word_count: 12500,
-      },
-    ];
-
-    const delay = (ms = 200) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-    const newId = () => `p-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-
-    return {
-      list: async (): Promise<ProjectListResult> => {
-        await delay();
-        return { success: true, projects: mockStore.map((p) => ({ ...p })) };
-      },
-      create: async (name: string): Promise<ProjectMutationResult> => {
-        await delay();
-        const trimmed = String(name || '').trim();
-        if (!trimmed) {
-          return { success: false, message: '项目名称不能为空' };
-        }
-        const now = new Date().toISOString();
-        const project: Project = {
-          id: newId(),
-          name: trimmed,
-          status: 'draft',
-          created_at: now,
-          updated_at: now,
-          outline_section_count: 0,
-          content_word_count: 0,
-        };
-        mockStore.push(project);
-        return { success: true, message: '项目已创建', project };
-      },
-      rename: async (id: string, name: string): Promise<ProjectMutationResult> => {
-        await delay();
-        const trimmed = String(name || '').trim();
-        if (!trimmed) {
-          return { success: false, message: '项目名称不能为空' };
-        }
-        const target = mockStore.find((p) => p.id === id);
-        if (!target) {
-          return { success: false, message: '项目不存在' };
-        }
-        target.name = trimmed;
-        target.updated_at = new Date().toISOString();
-        return { success: true, message: '项目已重命名', project: { ...target } };
-      },
-      delete: async (id: string): Promise<ProjectMutationResult> => {
-        await delay();
-        const idx = mockStore.findIndex((p) => p.id === id);
-        if (idx < 0) {
-          return { success: false, message: '项目不存在' };
-        }
-        const [removed] = mockStore.splice(idx, 1);
-        return { success: true, message: '项目已删除', project: { ...removed } };
-      },
-    };
-  })(),
 };

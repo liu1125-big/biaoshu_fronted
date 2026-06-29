@@ -4,7 +4,7 @@ import BidAnalysisPage from './BidAnalysisPage';
 import OutlineEditPage from './OutlineEditPage';
 import ContentEditPage from './ContentEditPage';
 import { useTechnicalPlanWorkflow } from '../hooks/useTechnicalPlanWorkflow';
-import { FloatingToolbar, ToolbarArrowLeftIcon, ToolbarArrowRightIcon } from '../../../shared/ui';
+import { FloatingToolbar, ToolbarArrowLeftIcon, ToolbarArrowRightIcon, ToolbarDocumentIcon } from '../../../shared/ui';
 import type { TechnicalPlanStep } from '../types';
 
 interface TechnicalPlanHomeProps {
@@ -69,10 +69,11 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
     setState((prev) => ({ ...prev, outlineData: data }));
   };
 
-  const handleContentSaved = (_item: { id: string; title?: string }, content: string) => {
-    // Mock: just log for now
-    console.log('Content saved:', content.slice(0, 50));
+  const handleContentSaved = (_item: { id: string; title?: string }, _content: string) => {
+    // Mock: content saved handler
   };
+
+  const isLastStep = activeIndex >= steps.length - 1;
 
   const navigationActions = [
     {
@@ -85,19 +86,43 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
     },
     {
       id: 'next-step',
-      label: '下一步',
-      icon: <ToolbarArrowRightIcon />,
+      label: isLastStep ? '导出 Word' : '下一步',
+      icon: isLastStep ? <ToolbarDocumentIcon /> : <ToolbarArrowRightIcon />,
       variant: 'primary' as const,
-      disabled: activeIndex >= steps.length - 1,
-      tooltip: activeIndex >= steps.length - 1 ? '当前已经是最后一步' : `进入${stepLabels[steps[activeIndex + 1]]}`,
-      onClick: () => goToOffset(1),
+      disabled: false,
+      tooltip: isLastStep ? '导出当前技术方案正文' : `进入${stepLabels[steps[activeIndex + 1]]}`,
+      onClick: isLastStep ? () => { alert('导出 Word 功能（待后端实现）'); } : () => goToOffset(1),
     },
   ];
+
+  const handleReset = () => {
+    if (window.confirm('会清空整个技术方案编写进度，是否确认？')) {
+      setState((prev) => ({
+        ...prev,
+        step: 'document-analysis',
+        tenderFile: null,
+        projectOverview: '',
+        techRequirements: '',
+        bidAnalysisMode: 'key',
+        bidAnalysisSelectedTaskIds: [],
+        bidAnalysisTasks: {},
+        outlineData: null,
+      }));
+      setSections({});
+    }
+  };
 
   const toolbarGroups = [
     {
       id: 'technical-plan-reset',
       actions: [
+        {
+          id: 'reset',
+          label: '重置',
+          variant: 'danger' as const,
+          tooltip: '清空当前技术方案流程',
+          onClick: handleReset,
+        },
         {
           id: 'home',
           label: '首页',

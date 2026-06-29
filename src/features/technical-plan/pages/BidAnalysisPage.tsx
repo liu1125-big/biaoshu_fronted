@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { MarkdownRenderer } from '../../../shared/ui';
 import { bidAnalysisTasks } from '../services/bidAnalysisWorkflow';
@@ -11,6 +11,14 @@ const taskGroups = [
   { title: '评审要求', ids: ['qualificationReview', 'complianceCheck', 'evaluationBid', 'businessScoring'] },
   { title: '主体与合同', ids: ['agentInfo', 'discardedBids', 'signingProcess', 'terminationCondition'] },
 ];
+
+const modeOptions: Array<{ id: 'key' | 'full'; title: string; badge: string }> = [
+  { id: 'key', title: '只解析关键项', badge: '默认' },
+  { id: 'full', title: '完整解析', badge: '更多 Token' },
+];
+
+const allBidAnalysisTaskIds = bidAnalysisTasks.map((task) => task.id);
+const requiredBidAnalysisTaskIds = bidAnalysisTasks.filter((t) => t.required).map((t) => t.id);
 
 const statusLabel: Record<string, string> = {
   idle: '待解析',
@@ -35,11 +43,17 @@ function BidAnalysisPage({
 }: BidAnalysisPageProps) {
   const [selectedTaskId, setSelectedTaskId] = useState('projectOverview');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [draftSelectedTaskIds, setDraftSelectedTaskIds] = useState<string[]>(
+  const [effectiveSelectedTaskIds, setEffectiveSelectedTaskIds] = useState<string[]>(
     mode === 'full' ? bidAnalysisTasks.map((t) => t.id) : bidAnalysisTasks.filter((t) => t.required).map((t) => t.id)
   );
+  const [draftSelectedTaskIds, setDraftSelectedTaskIds] = useState<string[]>([]);
 
-  const effectiveSelectedTaskIds = draftSelectedTaskIds;
+  // Sync draft when dialog opens
+  useEffect(() => {
+    if (settingsOpen) {
+      setDraftSelectedTaskIds(effectiveSelectedTaskIds);
+    }
+  }, [settingsOpen, effectiveSelectedTaskIds]);
   const selectedTasks = useMemo(() => {
     const selectedIdSet = new Set(effectiveSelectedTaskIds);
     return bidAnalysisTasks.filter((task) => selectedIdSet.has(task.id));
@@ -59,6 +73,14 @@ function BidAnalysisPage({
       prev.includes(taskId) ? prev.filter((id) => id !== taskId) : [...prev, taskId]
     );
   };
+
+  const selectPreset = (preset: 'key' | 'full') => {
+    setDraftSelectedTaskIds(preset === 'full' ? allBidAnalysisTaskIds : requiredBidAnalysisTaskIds);
+  };
+
+  // 判断当前 draft 属于哪种模式
+  const draftIsFull = draftSelectedTaskIds.length === allBidAnalysisTaskIds.length;
+  const draftIsKey = !draftIsFull && requiredBidAnalysisTaskIds.every((id) => draftSelectedTaskIds.includes(id));
 
   return (
     <div className="plan-step-body bid-analysis-page">
@@ -85,8 +107,8 @@ function BidAnalysisPage({
               <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.08a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.87.34l-.05.05a2 2 0 0 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.08A1.7 1.7 0 0 0 4.6 8.93a1.7 1.7 0 0 0-.34-1.87l-.05-.05a2 2 0 0 1 2.83-2.83l.05.05a1.7 1.7 0 0 0 1.87.34A1.7 1.7 0 0 0 10 3.01V3a2 2 0 0 1 4 0v.08a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.87-.34l.05-.05a2 2 0 0 1 2.83 2.83l-.05.05a1.7 1.7 0 0 0-.34 1.87 1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.08A1.7 1.7 0 0 0 19.4 15Z" />
             </svg>
           </button>
-          <button type="button" className="primary-action" onClick={() => setSettingsOpen(true)}>
-            配置解析项
+          <button type="button" className="primary-action">
+            开始解析
           </button>
         </div>
       </section>
@@ -161,6 +183,21 @@ function BidAnalysisPage({
                 <span className="section-kicker">解析项选择</span>
                 <strong>自定义解析</strong>
               </div>
+              <div className="bid-analysis-config-presets" role="group" aria-label="快速选择解析项">
+                {modeOptions.map((option) => (
+                  <button
+                    type="button"
+                    className={`bid-analysis-config-preset${
+                      (option.id === 'full' && draftIsFull) || (option.id === 'key' && draftIsKey) ? ' is-active' : ''
+                    }`}
+                    key={option.id}
+                    onClick={() => selectPreset(option.id)}
+                  >
+                    <span>{option.title}</span>
+                    <small>{option.badge}</small>
+                  </button>
+                ))}
+              </div>
             </header>
             <section className="bid-analysis-config-section">
               <div className="bid-analysis-config-section-head">
@@ -196,7 +233,23 @@ function BidAnalysisPage({
               </div>
             </section>
             <div className="content-regenerate-actions bid-analysis-config-actions">
-              <Dialog.Close className="secondary-action" type="button">关闭</Dialog.Close>
+              <button
+                type="button"
+                className="primary-action"
+                onClick={() => {
+                  setEffectiveSelectedTaskIds(draftSelectedTaskIds);
+                  setSettingsOpen(false);
+                }}
+              >
+                保存
+              </button>
+              <button
+                type="button"
+                className="secondary-action"
+                onClick={() => setSettingsOpen(false)}
+              >
+                取消
+              </button>
             </div>
           </Dialog.Content>
         </Dialog.Portal>

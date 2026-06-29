@@ -1,5 +1,4 @@
 export type SectionId =
-  | 'bid-generation'
   | 'technical-plan'
   | 'knowledge-base'
   | 'document-knowledge-base';
