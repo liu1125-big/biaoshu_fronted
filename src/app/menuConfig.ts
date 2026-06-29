@@ -4,7 +4,7 @@ export const appMenuItems: AppMenuItem[] = [
   {
     id: 'technical-plan',
     label: '标书生成',
-    description: '根据招标文件重头编写一份标书',
+    description: '根据招标文件解析生成标书',
   },
   {
     id: 'knowledge-base',

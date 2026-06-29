@@ -1,5 +1,5 @@
 import type { Components } from 'react-markdown';
-import type { KnowledgeBaseIndex, KnowledgeDocument } from '../types';
+import type { KnowledgeBaseIndex, KnowledgeDocument, KnowledgeAuditStatus } from '../types';
 
 export const emptyIndex: KnowledgeBaseIndex = { folders: [], documents: [] };
 export const emptyDocuments: KnowledgeDocument[] = [];
@@ -17,6 +17,12 @@ export const statusLabels: Record<KnowledgeDocument['status'], string> = {
   saving: '保存结果',
   success: '完成',
   error: '失败',
+};
+
+export const auditStatusLabels: Record<KnowledgeAuditStatus, string> = {
+  pending_review: '待审核',
+  published: '已发布',
+  deprecated: '已废弃',
 };
 
 export const contentMetricKeys = [
