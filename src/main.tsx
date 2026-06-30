@@ -1,3 +1,8 @@
+/**
+ * React 应用入口
+ * 挂载根组件 
+ */
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

@@ -1,3 +1,7 @@
+/**
+ * 入口:项目列表 -> 工作流切换
+ */
+
 import { useEffect, useState } from 'react';  // 入口组件
 import ProjectListPage from './ProjectListPage';
 import TechnicalPlanHome from './TechnicalPlanHome';

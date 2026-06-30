@@ -1,3 +1,7 @@
+/**
+ * 知识库相关类型(文档、文件夹、状态)
+ */
+
 // 文档处理状态
 export type KnowledgeDocumentStatus = 'pending' | 'copying' | 'converting' | 'extracting' | 'ready_for_matching' | 'matching' | 'recovering' | 'analyzing' | 'saving' | 'success' | 'error';
 

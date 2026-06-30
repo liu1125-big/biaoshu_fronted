@@ -1,3 +1,7 @@
+/**
+ * SVG 图标组件
+ */
+
 import type { SVGProps } from 'react';
 
 export function DocumentIcon(props: SVGProps<SVGSVGElement>) {

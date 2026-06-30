@@ -1,3 +1,7 @@
+/**
+ * 主布局: 侧边栏 + 内容区
+ */
+
 import * as Tooltip from '@radix-ui/react-tooltip';
 import type { ReactNode } from 'react';
 import Sidebar from './Sidebar';

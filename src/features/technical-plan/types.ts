@@ -1,3 +1,7 @@
+/**
+ * 标书相关类型定义
+ */
+
 // ============== 基础类型 ==============
 
 export type TechnicalPlanStep = 'document-analysis' | 'bid-analysis' | 'outline-generation' | 'content-edit';

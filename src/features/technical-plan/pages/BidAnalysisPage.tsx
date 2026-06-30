@@ -1,3 +1,7 @@
+/**
+ * STEP 2: 招标文件后端ai解析
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { MarkdownRenderer } from '../../../shared/ui';

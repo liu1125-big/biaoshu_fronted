@@ -1,3 +1,8 @@
+/**
+ * 项目列表 CRUD 状态管理
+ * 包含mock演示数据
+ */
+
 import { useCallback, useState } from 'react';
 import type { Project, ProjectStatus } from '../types';
 

@@ -1,15 +1,18 @@
+/**
+ * 知识库主页面
+ */
+
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react';
 import { useKnowledgeBase } from '../hooks/useKnowledgeBase';
 import { statusLabels, auditStatusLabels } from '../utils/constants';
-import { useDocumentParseNotice, useToast } from '../../../shared/ui';
+import { useToast } from '../../../shared/ui';
 import { KNOWLEDGE_TAGS, type KnowledgeTag } from '../types';
 
 function KnowledgeBasePage() {
   const { showToast } = useToast();
-  const { showDocumentParseNotice } = useDocumentParseNotice();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const kb = useKnowledgeBase({ showToast, showDocumentParseNotice });
+  const kb = useKnowledgeBase({ showToast });
 
   // 搜索和标签筛选
   const [searchKeyword, setSearchKeyword] = useState('');

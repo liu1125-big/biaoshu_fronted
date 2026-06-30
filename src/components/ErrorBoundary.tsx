@@ -1,3 +1,7 @@
+/**
+ * React 错误边界，捕获组件错误
+ */
+
 import { Component, type ReactNode } from 'react';
 
 interface Props {

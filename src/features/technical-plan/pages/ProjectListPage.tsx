@@ -1,4 +1,8 @@
-import { useState } from 'react';  // 项目列表页
+/**
+ * 项目列表页(创建/删除/筛选项目)
+ */
+
+import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useToast } from '../../../shared/ui';
 import { useProjectList } from '../hooks/useProjectList';

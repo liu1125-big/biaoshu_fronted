@@ -1,3 +1,7 @@
+/**
+ * 匿名化类型定义
+ */
+
 export interface AnonymizationOption {
   id: string;
   label: string;

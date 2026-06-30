@@ -1,3 +1,7 @@
+/**
+ * STEP 1: 上传招标文件, 解析为 Markdown
+ */
+
 import { useRef, useState } from 'react';
 import { MarkdownRenderer, useToast } from '../../../shared/ui';
 import { apiClient } from '../../../shared/api/apiClient';

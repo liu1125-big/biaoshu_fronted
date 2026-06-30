@@ -1,3 +1,7 @@
+/**
+ * 工作流总调度器,渲染各步骤页面
+ */
+
 import { useEffect, useState } from 'react';
 import DocumentAnalysisPage from './DocumentAnalysisPage';
 import BidAnalysisPage from './BidAnalysisPage';
@@ -44,7 +48,7 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
   useEffect(() => { document.title = '标书生成'; }, []);
 
   const { state, setState, switchStep } = useTechnicalPlanWorkflow();
-  const [tenderMarkdown, setTenderMarkdown] = useState('# 招标文件内容\n\n这里显示招标文件解析后的 Markdown 内容...');
+  const [tenderMarkdown, setTenderMarkdown] = useState('');
   const [sections, setSections] = useState<Record<string, { content: string; status: string }>>({});
 
   const activeIndex = steps.indexOf(state.step);

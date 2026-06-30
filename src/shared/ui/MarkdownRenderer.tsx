@@ -1,3 +1,7 @@
+/**
+ * Markdown 渲染器(react-markdown)
+ */
+
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
 import type { Components } from 'react-markdown';
 import rehypeRaw from 'rehype-raw';

@@ -1,3 +1,8 @@
+/**
+ * 根组件
+ * 配置全局路由规则
+ */
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import TechnicalPlanEntry from './features/technical-plan/pages/TechnicalPlanEntry';
 import KnowledgeBasePage from './features/knowledge-base/pages/KnowledgeBasePage';

@@ -1,3 +1,7 @@
+/**
+ * 状态标签、审核状态等常量
+ */
+
 import type { Components } from 'react-markdown';
 import type { KnowledgeBaseIndex, KnowledgeDocument, KnowledgeAuditStatus } from '../types';
 

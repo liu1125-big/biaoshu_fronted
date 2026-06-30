@@ -1,3 +1,6 @@
+/**
+ * 投标文件分析任务定义
+ */
 
 export interface BidAnalysisTaskDefinition {
   id: string;

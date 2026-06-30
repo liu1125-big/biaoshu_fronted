@@ -1,3 +1,7 @@
+/**
+ * 工作流状态管理(步骤、文件、目录等)
+ */
+
 import { useState } from 'react';
 import type { TechnicalPlanState, TechnicalPlanStep } from '../types';
 

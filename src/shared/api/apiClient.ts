@@ -1,3 +1,7 @@
+/**
+ * API 请求统一入口(封装axios)
+ */
+
 import axios from 'axios';
 import { ENDPOINTS } from './endpoints';
 

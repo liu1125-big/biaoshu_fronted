@@ -1,3 +1,7 @@
+/**
+ * 树形结构工具（收集叶子节点等）
+ */
+
 export interface TreeNode<T> {
   id: string;
   title?: string;
@@ -5,10 +9,6 @@ export interface TreeNode<T> {
   children?: T[];
 }
 
-/**
- * Recursively collects all leaf nodes from a tree structure.
- * A leaf node is one that has no children (or children array is empty/undefined).
- */
 export function collectLeaves<T extends TreeNode<T>>(items: T[]): T[] {
   return items.flatMap((item) =>
     item.children?.length ? collectLeaves(item.children) : [item]

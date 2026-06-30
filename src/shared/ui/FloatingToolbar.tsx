@@ -1,3 +1,7 @@
+/**
+ * 可拖拽浮动工具栏
+ */
+
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { useRef, useState } from 'react';
 import type { PointerEvent, ReactNode } from 'react';

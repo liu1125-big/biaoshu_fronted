@@ -7,67 +7,67 @@
 ```
 src/
 ├── main.tsx                      # 应用入口
-├── App.tsx                      # 根组件，路由配置
-├── styles.css                   # 全局样式
+├── App.tsx                       # 根组件，路由配置
+├── styles.css                    # 全局样式
 │
-├── app/                         # 应用级配置
+├── app/                          # 应用级配置
 │   ├── providers/
-│   │   └── AppProviders.tsx      # Context Providers (Toast, 文档解析提示)
-│   └── menuConfig.ts            # 导航菜单配置
+│   │   └── AppProviders.tsx      # Context Providers (Toast)
+│   └── menuConfig.ts             # 导航菜单配置
 │
-├── components/                  # 共享组件
-│   ├── AppShell.tsx             # 主布局（侧边栏 + 内容区）
+├── components/                   # 共享组件
+│   ├── AppShell.tsx              # 主布局（侧边栏 + 内容区）
 │   ├── Sidebar.tsx              # 可折叠导航侧边栏
 │   └── ErrorBoundary.tsx         # React 错误边界
 │
-├── features/                    # 功能模块
-│   ├── technical-plan/          # 📄 标书生成（核心功能）
-│   │   ├── types.ts             # 类型定义
+├── features/                     # 功能模块
+│   ├── technical-plan/           # 📄 标书生成（核心功能）
+│   │   ├── types.ts              # 类型定义
 │   │   ├── hooks/
 │   │   │   ├── useTechnicalPlanWorkflow.ts  # 工作流状态管理
-│   │   │   └── useProjectList.ts           # 项目列表管理
+│   │   │   └── useProjectList.ts            # 项目列表管理
 │   │   ├── services/
 │   │   │   └── bidAnalysisWorkflow.ts      # 投标分析任务定义
 │   │   └── pages/
 │   │       ├── TechnicalPlanEntry.tsx       # 入口（项目列表 → 工作流）
-│   │       ├── TechnicalPlanHome.tsx       # 工作流总调度器
-│   │       ├── ProjectListPage.tsx         # 项目列表（CRUD + 状态筛选）
-│   │       ├── DocumentAnalysisPage.tsx    # Step 1: 选择标书
-│   │       ├── BidAnalysisPage.tsx         # Step 2: 招标文件解析
-│   │       ├── OutlineEditPage.tsx         # Step 3: 目录生成
-│   │       └── ContentEditPage.tsx         # Step 4: 生成正文
+│   │       ├── TechnicalPlanHome.tsx        # 工作流总调度器
+│   │       ├── ProjectListPage.tsx          # 项目列表（CRUD + 状态筛选）
+│   │       ├── DocumentAnalysisPage.tsx      # Step 1: 选择标书
+│   │       ├── BidAnalysisPage.tsx          # Step 2: 招标文件解析
+│   │       ├── OutlineEditPage.tsx          # Step 3: 目录生成
+│   │       └── ContentEditPage.tsx          # Step 4: 生成正文
 │   │
-│   ├── knowledge-base/          # 📚 文档知识库
-│   │   ├── types.ts
+│   ├── knowledge-base/           # 📚 文档知识库
+│   │   ├── types.ts              # 类型定义
 │   │   ├── hooks/
-│   │   │   └── useKnowledgeBase.ts    # 知识库状态与操作
+│   │   │   └── useKnowledgeBase.ts         # 知识库状态与操作
 │   │   ├── pages/
-│   │   │   └── KnowledgeBasePage.tsx  # 知识库主页面
+│   │   │   └── KnowledgeBasePage.tsx        # 知识库主页面
 │   │   └── utils/
-│   │       ├── constants.tsx          # 状态标签等常量
-│   │       └── helpers.tsx           # 辅助函数
+│   │       ├── constants.tsx               # 状态标签等常量
+│   │       └── helpers.tsx                  # 辅助函数
 │   │
 │   └── anonymous/                # 🛡️ 匿名化工具
 │       ├── types.ts
 │       └── pages/
-│           └── AnonymousPage.tsx     # 文档敏感信息脱敏
+│           └── AnonymousPage.tsx             # 文档敏感信息脱敏
 │
-└── shared/                       # 共享资源
+└── shared/                      # 共享资源
     ├── api/
-    │   ├── apiClient.ts          # API 客户端（Axios + Mock）
+    │   ├── apiClient.ts          # API 客户端
     │   └── endpoints.ts          # API 端点定义
-    ├── ui/                       # 共享 UI 组件
-    │   ├── index.ts              # 统一导出
-    │   ├── Icons.tsx             # SVG 图标组件
-    │   ├── FloatingToolbar.tsx  # 可拖拽浮动工具栏
-    │   ├── MarkdownRenderer.tsx # Markdown 渲染
+    ├── ui/                      # 共享 UI 组件
+    │   ├── index.ts             # 统一导出
+    │   ├── Icons.tsx            # SVG 图标组件
+    │   ├── FloatingToolbar.tsx   # 可拖拽浮动工具栏
+    │   ├── MarkdownRenderer.tsx  # Markdown 渲染
     │   ├── MarkdownEditor.tsx   # Markdown 编辑器
-    │   ├── ToastProvider.tsx    # Toast 通知系统
-    │   └── DocumentParseNoticeProvider.tsx  # LibreOffice 提示
+    │   └── ToastProvider.tsx    # Toast 通知系统
     ├── utils/
     │   └── tree.ts              # 树形结构工具函数
     └── types/
-        └── navigation.ts        # 导航类型定义
+        ├── navigation.ts        # 导航类型定义
+        └── index.ts             # 类型统一导出
 ```
 
 ## 技术栈
@@ -105,7 +105,6 @@ npm run preview
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `VITE_API_BASE` | 后端 API 地址 | 空（同源） |
 | `VITE_APP_VERSION` | 应用版本号 | 0.1.0 |
 
 ## 模块说明
@@ -171,30 +170,18 @@ npm run preview
 `src/shared/api/apiClient.ts` 提供统一的 API 调用接口：
 
 ```typescript
-// 配置
-apiClient.config.load()
-apiClient.config.save()
-
 // Markdown 转换
-apiClient.markdown.convert(formData)  # 文件转 Markdown
-
-// AI
-apiClient.ai.chat(request)           // AI 对话
-apiClient.ai.requestJson<TResult>()  // AI JSON 请求
-
-// 文件
-apiClient.file.parse(formData)       // 解析上传的文件
-
-// 技术方案
-apiClient.technicalPlan.*            // 标书生成相关 API
-apiClient.tasks.*                    // 任务管理 API
-apiClient.export.*                   // 导出 API
+apiClient.markdown.convert(formData)  // 文件转 Markdown
 
 // 知识库
-apiClient.knowledgeBase.*           // 知识库 API
+apiClient.knowledgeBase.list()
+apiClient.knowledgeBase.createFolder(name)
+apiClient.knowledgeBase.renameFolder(folderId, name)
+apiClient.knowledgeBase.deleteFolder(folderId)
+apiClient.knowledgeBase.uploadDocuments(folderId)
 ```
 
-**Mock 实现**：部分模块已内置 Mock 数据，开发阶段可独立运行。
+**Mock 实现**：知识库模块已内置 Mock 数据，开发阶段可独立运行。
 
 ## 路由
 
@@ -217,12 +204,3 @@ apiClient.knowledgeBase.*           // 知识库 API
 
 1. 在 `src/shared/ui/` 下创建组件
 2. 在 `src/shared/ui/index.ts` 导出
-
-### API 开发
-
-当前部分模块使用 Mock 数据：
-- ✅ `knowledgeBase.*` - 已有 Mock 实现
-- ✅ `projects.*` - 已有 Mock 实现（位于 `useProjectList` hook）
-- ⚠️ 其他模块 - 需要后端支持
-
-Mock 与真实 API 切换：通过 `VITE_API_BASE` 环境变量指定后端地址。

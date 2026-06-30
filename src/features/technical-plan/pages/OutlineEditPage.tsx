@@ -1,3 +1,7 @@
+/**
+ * STEP 3: 目录生成编辑
+ */
+
 import { useState } from 'react';
 import type { OutlineEditPageProps } from '../types';
 

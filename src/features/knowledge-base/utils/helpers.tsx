@@ -1,3 +1,7 @@
+/**
+ * 工具函数(合并文档等)
+ */
+
 import type { KnowledgeDocument } from '../types';
 
 export function canOpenMarkdown(document: KnowledgeDocument) {

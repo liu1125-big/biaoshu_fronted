@@ -1,3 +1,7 @@
+/**
+ * 导航相关类型(菜单项、子菜单)
+ */
+
 export type SectionId =
   | 'technical-plan'
   | 'knowledge-base'

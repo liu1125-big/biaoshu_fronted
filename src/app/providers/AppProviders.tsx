@@ -1,5 +1,10 @@
+/**
+ * Context Providers
+ * Toast 通知
+ */
+
 import type { ReactNode } from 'react';
-import { DocumentParseNoticeProvider, ToastProvider } from '../../shared/ui';
+import { ToastProvider } from '../../shared/ui';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -8,7 +13,7 @@ interface AppProvidersProps {
 function AppProviders({ children }: AppProvidersProps) {
   return (
     <ToastProvider>
-      <DocumentParseNoticeProvider>{children}</DocumentParseNoticeProvider>
+      {children}
     </ToastProvider>
   );
 }

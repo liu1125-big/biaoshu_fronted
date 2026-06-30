@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+/**
+ * 知识库状态与操作(CRUD)
+ */
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
-import { isLibreOfficeRequiredMessage } from '../../../shared/ui';
 import type { KnowledgeBaseIndex, KnowledgeDocument } from '../types';
 import { emptyDocuments, emptyIndex } from '../utils/constants';
 import { mergeDocuments } from '../utils/helpers';
 
 interface UseKnowledgeBaseOptions {
   showToast: (message: string, type: 'success' | 'error' | 'info') => void;
-  showDocumentParseNotice: (message: string) => void;
 }
 
-export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnowledgeBaseOptions) {
+export function useKnowledgeBase({ showToast }: UseKnowledgeBaseOptions) {
   const [index, setIndex] = useState<KnowledgeBaseIndex>(emptyIndex);
   const [activeFolderId, setActiveFolderId] = useState('');
   const [listLoading, setListLoading] = useState(true);
@@ -18,7 +20,6 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [creatingFolder, setCreatingFolder] = useState(false);
-  const documentParseNoticeIdsRef = useRef(new Set<string>());
 
   const activeFolder = index.folders.find((folder) => folder.id === activeFolderId) || index.folders[0];
 
@@ -93,12 +94,7 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
       setLoading(true);
       const result = await apiClient.knowledgeBase.uploadDocuments(activeFolder.id);
       if (!result?.success) {
-        const message = result?.message || '未选择文档';
-        if (isLibreOfficeRequiredMessage(message)) {
-          showDocumentParseNotice(message);
-          return;
-        }
-        showToast(message, 'info');
+        showToast(result?.message || '未选择文档', 'info');
         return;
       }
       if (result.documents?.length) {
@@ -106,16 +102,11 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
       }
       showToast(result.message, 'success');
     } catch (error) {
-      const message = error instanceof Error ? error.message : '上传文档失败';
-      if (isLibreOfficeRequiredMessage(message)) {
-        showDocumentParseNotice(message);
-        return;
-      }
-      showToast(message, 'error');
+      showToast(error instanceof Error ? error.message : '上传文档失败', 'error');
     } finally {
       setLoading(false);
     }
-  }, [activeFolder, showToast, showDocumentParseNotice]);
+  }, [activeFolder, showToast]);
 
   const renameFolder = useCallback(async (folderId: string, currentName: string) => {
     const name = window.prompt('请输入新的文件夹名称', currentName)?.trim();
@@ -155,13 +146,6 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
     void loadInitialData();
     const unsubscribe = apiClient.knowledgeBase.onEvent((event: { document: KnowledgeDocument }) => {
       const { document: doc } = event;
-      const parseMessage = doc.error || doc.message;
-      if (doc.status === 'error'
-        && isLibreOfficeRequiredMessage(parseMessage)
-        && !documentParseNoticeIdsRef.current.has(doc.id)) {
-        documentParseNoticeIdsRef.current.add(doc.id);
-        showDocumentParseNotice(parseMessage);
-      }
       setIndex((prev) => ({
         ...prev,
         documents: prev.documents.some((item) => item.id === doc.id)
@@ -172,7 +156,7 @@ export function useKnowledgeBase({ showToast, showDocumentParseNotice }: UseKnow
     return () => {
       unsubscribe?.();
     };
-  }, [loadInitialData, showDocumentParseNotice]);
+  }, [loadInitialData]);
 
   // Folder selection fallback
   useEffect(() => {

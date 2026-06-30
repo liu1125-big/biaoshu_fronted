@@ -1,3 +1,8 @@
+/**
+ * Toast 通知系统
+ * 文件上传、接口调用、修改编辑、导出文件等可复用提示框
+ */
+
 import * as Toast from '@radix-ui/react-toast';
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 

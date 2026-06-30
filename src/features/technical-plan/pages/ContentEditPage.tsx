@@ -1,3 +1,7 @@
+/**
+ * STEP 4: 按大纲生成正文内容
+ */
+
 import { useMemo, useState } from 'react';
 import { MarkdownEditor, MarkdownRenderer } from '../../../shared/ui';
 import { collectLeaves } from '../../../shared/utils/tree';

@@ -1,3 +1,8 @@
+/**
+ * 文档敏感信息脱敏页面
+ * 包含mock演示数据
+ */
+
 import { useRef, useState } from 'react';
 import { MarkdownRenderer, useToast } from '../../../shared/ui';
 import type { AnonymizationOption } from '../types';
