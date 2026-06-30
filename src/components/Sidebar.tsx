@@ -7,7 +7,6 @@ import { useState, type ComponentType, type ReactElement, type SVGProps } from '
 import { useLocation, useNavigate } from 'react-router-dom';
 import { appMenuItems } from '../app/menuConfig';
 import type { AppMenuItem, SectionId } from '../shared/types/navigation';
-import { useToast } from '../shared/ui';
 import { ArchiveIcon, ChevronIcon, DocumentIcon, ShieldIcon } from '../shared/ui/Icons';
 import logoUrl from '/icon_256.png';
 
@@ -19,7 +18,6 @@ const navigationIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = 
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const { showToast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -27,24 +25,8 @@ function Sidebar() {
   const activeSection = (currentPath.replace('/', '') || 'technical-plan') as SectionId;
 
   const handleMenuItemClick = (item: AppMenuItem) => {
-    if (!item.notice) {
-      const targetId = item.children?.[0]?.id || item.id;
-      navigate(`/${targetId}`);
-      return;
-    }
-
-    showToast(item.notice.message, 'info', {
-      duration: 7000,
-      actions: item.notice.externalUrl ? [
-        {
-          label: item.notice.actionLabel || '打开链接',
-          variant: 'primary',
-          onClick: () => {
-            window.open(item.notice?.externalUrl || '', '_blank', 'noopener,noreferrer');
-          },
-        },
-      ] : undefined,
-    });
+    const targetId = item.children?.[0]?.id || item.id;
+    navigate(`/${targetId}`);
   };
 
   return (
@@ -57,7 +39,7 @@ function Sidebar() {
         </div>
         <div className="brand-copy">
           <span>AI标书</span>
-          <strong>Web前端</strong>
+          <strong>投标智能体</strong>
         </div>
       </div>
 

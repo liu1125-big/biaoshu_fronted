@@ -16,6 +16,39 @@ export const apiClient = {
     },
   },
 
+  projects: {
+    list: async () => {
+      const { data } = await http.get(ENDPOINTS.PROJECTS);
+      // 后端直接返回数组，无需包装
+      return data as Array<{
+        id: string;
+        name: string;
+        status: string;
+        created_at: string;
+        updated_at: string;
+        tender_file_name?: string;
+        outline_section_count?: number;
+        content_word_count?: number;
+      }>;
+    },
+    create: async (payload: { name: string; tender_file_name?: string }) => {
+      const { data } = await http.post(ENDPOINTS.PROJECTS, payload);
+      return data;
+    },
+    get: async (projectId: string) => {
+      const { data } = await http.get(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
+      return data;
+    },
+    update: async (projectId: string, payload: { name?: string; status?: string; tender_file_name?: string; outline_section_count?: number; content_word_count?: number }) => {
+      const { data } = await http.put(ENDPOINTS.PROJECT.replace('{project_id}', projectId), payload);
+      return data;
+    },
+    delete: async (projectId: string) => {
+      const { data } = await http.delete(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
+      return data;
+    },
+  },
+
   knowledgeBase: (() => {
     type KbStatus = 'pending' | 'copying' | 'converting' | 'extracting' | 'ready_for_matching' | 'matching' | 'recovering' | 'analyzing' | 'saving' | 'success' | 'error';
     type KbAuditStatus = 'pending_review' | 'published' | 'deprecated';

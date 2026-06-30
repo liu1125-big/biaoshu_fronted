@@ -8,18 +8,11 @@ export type SectionId =
   | 'document-knowledge-base'
   | 'anonymous';
 
-export interface AppMenuNotice {
-  message: string;
-  actionLabel?: string;
-  externalUrl?: string;
-}
-
 export interface AppSubMenuItem {
   id: SectionId;
   label: string;
   description: string;
   icon?: 'document' | 'expand' | 'briefcase' | 'compare' | 'shield' | 'code' | 'prompt' | 'file' | 'export' | 'tool';
-  notice?: AppMenuNotice;
 }
 
 export interface AppMenuItem {
@@ -28,5 +21,4 @@ export interface AppMenuItem {
   description: string;
   icon?: 'document' | 'expand' | 'briefcase' | 'compare' | 'shield' | 'code' | 'prompt' | 'file' | 'export' | 'tool';
   children?: AppSubMenuItem[];
-  notice?: AppMenuNotice;
 }

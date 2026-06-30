@@ -2,4 +2,4 @@
  * 统一导出导航类型
  */
 
-export type { AppMenuItem, AppMenuNotice, AppSubMenuItem, SectionId } from './navigation';
+export type { AppMenuItem, AppSubMenuItem, SectionId } from './navigation';
