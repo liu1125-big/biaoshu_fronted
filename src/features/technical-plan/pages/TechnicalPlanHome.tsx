@@ -44,7 +44,7 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
   useEffect(() => { document.title = '标书生成'; }, []);
 
   const { state, setState, switchStep } = useTechnicalPlanWorkflow();
-  const [tenderMarkdown] = useState('# 招标文件内容\n\n这里显示招标文件解析后的 Markdown 内容...');
+  const [tenderMarkdown, setTenderMarkdown] = useState('# 招标文件内容\n\n这里显示招标文件解析后的 Markdown 内容...');
   const [sections, setSections] = useState<Record<string, { content: string; status: string }>>({});
 
   const activeIndex = steps.indexOf(state.step);
@@ -56,13 +56,14 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
     }
   };
 
-  const handleFileImported = (state: { tenderFile: { fileName: string; markdownChars: number } }, _markdown: string) => {
+  const handleFileImported = (fileInfo: { tenderFile: { fileName: string; markdownChars: number }; markdown: string }) => {
     setState((prev) => ({
       ...prev,
-      tenderFile: state.tenderFile,
+      tenderFile: fileInfo.tenderFile,
       projectOverview: '项目概述内容...',
       techRequirements: '技术评分要求内容...',
     }));
+    setTenderMarkdown(fileInfo.markdown);
   };
 
   const handleOutlineChange = (data: typeof mockOutlineData) => {

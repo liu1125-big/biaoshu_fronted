@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
-import { MarkdownRenderer } from '../../../shared/ui';
+import { MarkdownRenderer, useToast } from '../../../shared/ui';
+import { apiClient } from '../../../shared/api/apiClient';
 import type { DocumentAnalysisPageProps } from '../types';
 
 function DocumentFilePill({ fileName, markdownChars }: { fileName: string; markdownChars: number }) {
+  const ext = fileName.split('.').pop()?.toUpperCase() || 'DOC';
   return (
     <div className="technical-document-file-pill">
-      <div className="technical-document-file-icon">MD</div>
+      <div className="technical-document-file-icon">{ext}</div>
       <div className="technical-document-file-info">
         <strong>{fileName}</strong>
         <span>{markdownChars} 字</span>
@@ -20,7 +22,12 @@ function DocumentAnalysisPage({
   onFileImported,
 }: DocumentAnalysisPageProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+  const [localFileName, setLocalFileName] = useState<string | null>(null);
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
   const tenderInputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -41,14 +48,55 @@ function DocumentAnalysisPage({
     tenderInputRef.current?.click();
   };
 
-  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && onFileImported) {
-      // Mock: 直接用文件名模拟导入
-      onFileImported(
-        { tenderFile: { fileName: file.name, markdownChars: 12345 } },
-        `# ${file.name}\n\n这是模拟解析后的招标文件内容...`
-      );
+    if (!file || !onFileImported) return;
+
+    setCurrentFile(file);
+    setLocalFileName(file.name);
+    setIsConverting(true);
+    setIsFailed(false);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const result = await apiClient.markdown.convert(formData);
+      const markdownChars = result.markdown.length;
+      onFileImported({
+        tenderFile: { fileName: file.name, markdownChars },
+        markdown: result.markdown
+      });
+      setLocalFileName(null);
+      setIsFailed(false);
+      showToast('文档解析成功');
+    } catch (err) {
+      setIsFailed(true);
+      showToast(err instanceof Error ? err.message : '解析失败', 'error');
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
+  const handleRetry = async () => {
+    if (!currentFile || !onFileImported) return;
+    setIsConverting(true);
+    setIsFailed(false);
+    try {
+      const formData = new FormData();
+      formData.append('file', currentFile);
+      const result = await apiClient.markdown.convert(formData);
+      const markdownChars = result.markdown.length;
+      onFileImported({
+        tenderFile: { fileName: currentFile.name, markdownChars },
+        markdown: result.markdown
+      });
+      setLocalFileName(null);
+      setIsFailed(false);
+      showToast('文档解析成功');
+    } catch (err) {
+      setIsFailed(true);
+      showToast(err instanceof Error ? err.message : '解析失败', 'error');
+    } finally {
+      setIsConverting(false);
     }
   };
 
@@ -74,8 +122,8 @@ function DocumentAnalysisPage({
               <strong>招标文件</strong>
             </div>
             <div className="technical-document-upload-content">
-              {tenderFile ? (
-                <DocumentFilePill fileName={tenderFile.fileName} markdownChars={tenderFile.markdownChars} />
+              {localFileName || tenderFile ? (
+                <DocumentFilePill fileName={localFileName || tenderFile?.fileName || ''} markdownChars={tenderFile?.markdownChars ?? 0} />
               ) : (
                 <div className="technical-document-empty-upload">
                   <strong>等待招标文件</strong>
@@ -84,9 +132,14 @@ function DocumentAnalysisPage({
               )}
             </div>
             <div className="technical-document-upload-actions">
-              <button type="button" className="primary-action" onClick={triggerFilePicker}>
-                {tenderFile ? '替换' : '上传'}
+              <button type="button" className="primary-action" onClick={triggerFilePicker} disabled={isConverting}>
+                {isConverting ? '解析中...' : tenderFile ? '替换' : '上传'}
               </button>
+              {isFailed && (
+                <button type="button" className="primary-action" onClick={handleRetry}>
+                  重试
+                </button>
+              )}
             </div>
           </article>
         </div>
@@ -98,7 +151,17 @@ function DocumentAnalysisPage({
           <span>{tenderFile ? `${tenderFile.fileName} · ${tenderFile.markdownChars} 字` : '等待上传'}</span>
         </div>
 
-        {tenderMarkdown ? (
+        {isConverting ? (
+          <div className="markdown-empty-state">
+            <strong>正在解析文档...</strong>
+            <p>请稍候，文档转换需要一些时间</p>
+          </div>
+        ) : isFailed ? (
+          <div className="markdown-empty-state">
+            <strong>解析失败</strong>
+            <p>文档解析失败，请检查文件格式或网络连接后重试</p>
+          </div>
+        ) : tenderMarkdown ? (
           <div className="markdown-viewer">
             <MarkdownRenderer>
               {tenderMarkdown}

@@ -8,14 +8,14 @@
 src/
 ├── main.tsx                      # 应用入口
 ├── App.tsx                      # 根组件，路由配置
-├── styles.css                    # 全局样式
+├── styles.css                   # 全局样式
 │
 ├── app/                         # 应用级配置
 │   ├── providers/
 │   │   └── AppProviders.tsx      # Context Providers (Toast, 文档解析提示)
 │   └── menuConfig.ts            # 导航菜单配置
 │
-├── components/                   # 共享组件
+├── components/                  # 共享组件
 │   ├── AppShell.tsx             # 主布局（侧边栏 + 内容区）
 │   ├── Sidebar.tsx              # 可折叠导航侧边栏
 │   └── ErrorBoundary.tsx         # React 错误边界
@@ -35,34 +35,39 @@ src/
 │   │       ├── DocumentAnalysisPage.tsx    # Step 1: 选择标书
 │   │       ├── BidAnalysisPage.tsx         # Step 2: 招标文件解析
 │   │       ├── OutlineEditPage.tsx         # Step 3: 目录生成
-│   │       └── ContentEditPage.tsx          # Step 4: 生成正文
+│   │       └── ContentEditPage.tsx         # Step 4: 生成正文
 │   │
-│   └── knowledge-base/          # 📚 文档知识库
+│   ├── knowledge-base/          # 📚 文档知识库
+│   │   ├── types.ts
+│   │   ├── hooks/
+│   │   │   └── useKnowledgeBase.ts    # 知识库状态与操作
+│   │   ├── pages/
+│   │   │   └── KnowledgeBasePage.tsx  # 知识库主页面
+│   │   └── utils/
+│   │       ├── constants.tsx          # 状态标签等常量
+│   │       └── helpers.tsx           # 辅助函数
+│   │
+│   └── anonymous/                # 🛡️ 匿名化工具
 │       ├── types.ts
-│       ├── hooks/
-│       │   └── useKnowledgeBase.ts    # 知识库状态与操作
-│       ├── pages/
-│       │   └── KnowledgeBasePage.tsx  # 知识库主页面
-│       └── utils/
-│           ├── constants.tsx          # 状态标签等常量
-│           └── helpers.tsx           # 辅助函数
+│       └── pages/
+│           └── AnonymousPage.tsx     # 文档敏感信息脱敏
 │
-└── shared/                      # 共享资源
+└── shared/                       # 共享资源
     ├── api/
-    │   ├── apiClient.ts         # API 客户端（Axios + Mock）
-    │   └── endpoints.ts         # API 端点定义
-    ├── ui/                      # 共享 UI 组件
-    │   ├── index.ts             # 统一导出
-    │   ├── Icons.tsx            # SVG 图标组件
+    │   ├── apiClient.ts          # API 客户端（Axios + Mock）
+    │   └── endpoints.ts          # API 端点定义
+    ├── ui/                       # 共享 UI 组件
+    │   ├── index.ts              # 统一导出
+    │   ├── Icons.tsx             # SVG 图标组件
     │   ├── FloatingToolbar.tsx  # 可拖拽浮动工具栏
     │   ├── MarkdownRenderer.tsx # Markdown 渲染
-    │   ├── MarkdownEditor.tsx    # Markdown 编辑器
-    │   ├── ToastProvider.tsx   # Toast 通知系统
+    │   ├── MarkdownEditor.tsx   # Markdown 编辑器
+    │   ├── ToastProvider.tsx    # Toast 通知系统
     │   └── DocumentParseNoticeProvider.tsx  # LibreOffice 提示
     ├── utils/
     │   └── tree.ts              # 树形结构工具函数
     └── types/
-        └── navigation.ts       # 导航类型定义
+        └── navigation.ts        # 导航类型定义
 ```
 
 ## 技术栈
@@ -110,9 +115,12 @@ npm run preview
 多步骤向导式标书生成系统：
 
 **Step 1 - 选择标书**
-- 上传招标文件（.doc, .docx）
-- 拖拽上传
-- 解析为 Markdown 显示
+- 支持拖拽上传或点击上传招标文件（.doc, .docx）
+- 上传后立即显示文件名
+- 解析进度状态：按钮显示"解析中..."并禁用
+- 解析成功：显示 Markdown 内容，Toast 提示"文档解析成功"
+- 解析失败：显示"重试"按钮，Toast 提示错误信息
+- 支持替换文件重新上传
 
 **Step 2 - 招标文件解析**
 - 18 个解析任务，分为 5 组：
@@ -152,6 +160,12 @@ npm run preview
 - 处理流水线：pending → copying → converting → extracting → matching → analyzing → saving → success
 - 进度跟踪
 
+### 匿名化工具 (anonymous)
+
+文档敏感信息脱敏处理：
+- 自动识别并脱敏姓名、电话、身份证、地址等敏感信息
+- 支持批量处理
+
 ## API 客户端
 
 `src/shared/api/apiClient.ts` 提供统一的 API 调用接口：
@@ -161,23 +175,26 @@ npm run preview
 apiClient.config.load()
 apiClient.config.save()
 
+// Markdown 转换
+apiClient.markdown.convert(formData)  # 文件转 Markdown
+
 // AI
 apiClient.ai.chat(request)           // AI 对话
 apiClient.ai.requestJson<TResult>()  // AI JSON 请求
 
 // 文件
-apiClient.file.parse(formData)        // 解析上传的文件
+apiClient.file.parse(formData)       // 解析上传的文件
 
 // 技术方案
-apiClient.technicalPlan.*             // 标书生成相关 API
-apiClient.tasks.*                     // 任务管理 API
-apiClient.export.*                    // 导出 API
+apiClient.technicalPlan.*            // 标书生成相关 API
+apiClient.tasks.*                    // 任务管理 API
+apiClient.export.*                   // 导出 API
 
 // 知识库
-apiClient.knowledgeBase.*             // 知识库 API
+apiClient.knowledgeBase.*           // 知识库 API
 ```
 
-**Mock 实现**：知识库模块已内置 Mock 数据，开发阶段可独立运行。
+**Mock 实现**：部分模块已内置 Mock 数据，开发阶段可独立运行。
 
 ## 路由
 
@@ -185,6 +202,7 @@ apiClient.knowledgeBase.*             // 知识库 API
 / → 重定向到 /technical-plan
 /technical-plan → 标书生成入口
 /document-knowledge-base → 文档知识库
+/anonymous → 匿名化工具
 ```
 
 ## 开发说明

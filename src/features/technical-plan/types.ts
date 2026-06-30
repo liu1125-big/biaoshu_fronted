@@ -108,7 +108,7 @@ export interface ContentGenerationRuntimeState {
 export interface DocumentAnalysisPageProps {
   tenderFile: { fileName: string; markdownChars: number } | null;
   tenderMarkdown: string;
-  onFileImported?: (state: { tenderFile: { fileName: string; markdownChars: number } }, markdown: string) => void;
+  onFileImported?: (state: { tenderFile: { fileName: string; markdownChars: number }; markdown: string }) => void;
   onStateChange?: (state: Partial<TechnicalPlanState>) => void;
 }
 
