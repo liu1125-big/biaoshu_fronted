@@ -46,6 +46,38 @@ function DocumentAnalysisPage({
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(false);
+
+    const files = event.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    if (!onFileImported) return;
+
+    setCurrentFile(file);
+    setLocalFileName(file.name);
+    setIsConverting(true);
+    setIsFailed(false);
+
+    (async () => {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const result = await apiClient.markdown.convert(formData);
+        const markdownChars = result.markdown.length;
+        onFileImported({
+          tenderFile: { fileName: file.name, markdownChars },
+          markdown: result.markdown
+        });
+        setLocalFileName(null);
+        setIsFailed(false);
+        showToast('文档解析成功');
+      } catch (err) {
+        setIsFailed(true);
+        showToast(err instanceof Error ? err.message : '解析失败', 'error');
+      } finally {
+        setIsConverting(false);
+      }
+    })();
   };
 
   const triggerFilePicker = () => {

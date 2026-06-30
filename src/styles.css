@@ -7401,6 +7401,12 @@ button {
   background: var(--yb-bg-soft);
 }
 
+.anonymous-upload-area.is-dragging {
+  border-color: rgba(33, 116, 253, 0.5);
+  background: rgba(33, 116, 253, 0.04);
+  box-shadow: 0 0 0 4px rgba(33, 116, 253, 0.08);
+}
+
 .anonymous-upload-hint {
   display: flex;
   flex-direction: column;

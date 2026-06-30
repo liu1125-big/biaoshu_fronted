@@ -3,7 +3,7 @@
  * 包含mock演示数据
  */
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MarkdownRenderer, useToast } from '../../../shared/ui';
 import type { AnonymizationOption } from '../types';
 
@@ -44,6 +44,8 @@ const MOCK_MARKDOWN = `# 匿名化处理后的文档
 > 原始文档包含 15 处敏感信息，已处理 12 处，保留 3 处（用户未选中）。`;
 
 export default function AnonymousPage() {
+  useEffect(() => { document.title = '匿名化工具'; }, []);
+
   const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +53,7 @@ export default function AnonymousPage() {
   const [markdown, setMarkdown] = useState('');
   const [options, setOptions] = useState<AnonymizationOption[]>(DEFAULT_OPTIONS);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const toggleOption = (id: string) => {
     setOptions((prev) => prev.map((o) => (o.id === id ? { ...o, enabled: !o.enabled } : o)));
@@ -59,6 +62,37 @@ export default function AnonymousPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const f = event.target.files?.[0];
     if (!f) return;
+    const ext = f.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'doc' && ext !== 'docx') {
+      showToast('仅支持 .doc / .docx 格式文件', 'error');
+      return;
+    }
+    setFile({ fileName: f.name, charCount: 0 });
+    setMarkdown('');
+    showToast(`已选择文件: ${f.name}`, 'success');
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const files = event.dataTransfer.files;
+    if (files.length === 0) return;
+    const f = files[0];
+    const ext = f.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'doc' && ext !== 'docx') {
+      showToast('仅支持 .doc / .docx 格式文件', 'error');
+      return;
+    }
     setFile({ fileName: f.name, charCount: 0 });
     setMarkdown('');
     showToast(`已选择文件: ${f.name}`, 'success');
@@ -104,7 +138,13 @@ export default function AnonymousPage() {
       <section className="anonymous-layout">
         {/* 左侧：上传和配置 */}
         <aside className="anonymous-config-panel">
-          <div className="anonymous-upload-area" onClick={() => fileInputRef.current?.click()}>
+          <div
+            className={`anonymous-upload-area${isDragging ? ' is-dragging' : ''}`}
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
             <input ref={fileInputRef} type="file" accept=".doc,.docx" style={{ display: 'none' }} onChange={handleFileChange} />
             {file ? (
               <div className="anonymous-file-info">
@@ -116,7 +156,7 @@ export default function AnonymousPage() {
               </div>
             ) : (
               <div className="anonymous-upload-hint">
-                <strong>点击上传文件</strong>
+                <strong>点击或拖拽上传文件</strong>
                 <small>支持 .doc / .docx 格式</small>
               </div>
             )}
