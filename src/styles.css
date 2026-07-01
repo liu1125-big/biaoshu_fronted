@@ -189,9 +189,8 @@ button {
   letter-spacing: 0.02em;
 }
 
-.is-collapsed .brand-copy,
-.is-collapsed .nav-copy,
-.is-collapsed {
+.sidebar.is-collapsed .brand-copy,
+.sidebar.is-collapsed .nav-copy {
   display: none;
 }
 
@@ -3410,7 +3409,7 @@ button {
   position: fixed;
   right: 28px;
   top: 28px;
-  z-index: 80;
+  z-index: 200;
   display: grid;
   gap: 12px;
   width: min(560px, calc(100vw - 40px));
