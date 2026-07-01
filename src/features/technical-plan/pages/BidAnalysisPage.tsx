@@ -40,9 +40,7 @@ const mockTaskContents: Record<string, string> = {
 };
 
 function BidAnalysisPage({
-  hasTenderFile,
   mode,
-  selectedTaskIds,
   tasks,
 }: BidAnalysisPageProps) {
   const [selectedTaskId, setSelectedTaskId] = useState('projectOverview');

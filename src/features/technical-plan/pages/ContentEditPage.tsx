@@ -47,7 +47,6 @@ function ContentEditPage({ outlineData, sections }: ContentEditPageProps) {
 
   const renderTree = (items: typeof outline, level = 0): React.ReactNode =>
     items.map((item) => {
-      const isLeaf = !item.children?.length;
       const status = sections?.[item.id]?.status || (mockContents[item.id] ? 'success' : 'idle');
 
       return (

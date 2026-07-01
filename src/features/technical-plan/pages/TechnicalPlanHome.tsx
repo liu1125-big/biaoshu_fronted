@@ -74,10 +74,6 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
     setState((prev) => ({ ...prev, outlineData: data }));
   };
 
-  const handleContentSaved = (_item: { id: string; title?: string }, _content: string) => {
-    // Mock: content saved handler
-  };
-
   const isLastStep = activeIndex >= steps.length - 1;
 
   const navigationActions = [
@@ -155,17 +151,13 @@ function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
 
       {state.step === 'bid-analysis' && (
         <BidAnalysisPage
-          hasTenderFile={Boolean(state.tenderFile)}
           mode={state.bidAnalysisMode}
-          selectedTaskIds={state.bidAnalysisSelectedTaskIds}
           tasks={state.bidAnalysisTasks}
         />
       )}
 
       {state.step === 'outline-generation' && (
         <OutlineEditPage
-          projectOverview={state.projectOverview}
-          techRequirements={state.techRequirements}
           outlineData={state.outlineData || mockOutlineData}
           onOutlineChange={handleOutlineChange}
         />

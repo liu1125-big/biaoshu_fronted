@@ -6,8 +6,6 @@ import { useState } from 'react';
 import type { OutlineEditPageProps } from '../types';
 
 function OutlineEditPage({
-  projectOverview,
-  techRequirements,
   outlineData,
   onOutlineChange,
 }: OutlineEditPageProps) {

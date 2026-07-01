@@ -117,9 +117,7 @@ export interface DocumentAnalysisPageProps {
 }
 
 export interface BidAnalysisPageProps {
-  hasTenderFile: boolean;
   mode: BidAnalysisMode;
-  selectedTaskIds: string[];
   tasks: BidAnalysisTasks;
   progress?: number;
   onProgressChange?: (progress: number) => void;
@@ -127,8 +125,6 @@ export interface BidAnalysisPageProps {
 }
 
 export interface OutlineEditPageProps {
-  projectOverview: string;
-  techRequirements: string;
   outlineData: OutlineData | null;
   onOutlineChange?: (data: OutlineData) => void;
   onSortGuardChange?: (guard: { hasUnsavedSort: () => boolean; saveSort: () => Promise<void>; discardSort: () => void } | null) => void;

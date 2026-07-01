@@ -2,12 +2,10 @@
  * 状态标签、审核状态等常量
  */
 
-import type { Components } from 'react-markdown';
 import type { KnowledgeBaseIndex, KnowledgeDocument, KnowledgeAuditStatus } from '../types';
 
 export const emptyIndex: KnowledgeBaseIndex = { folders: [], documents: [] };
 export const emptyDocuments: KnowledgeDocument[] = [];
-export const documentRenderBatchSize = 80;
 
 export const statusLabels: Record<KnowledgeDocument['status'], string> = {
   pending: '等待处理',
@@ -27,27 +25,4 @@ export const auditStatusLabels: Record<KnowledgeAuditStatus, string> = {
   pending_review: '待审核',
   published: '已发布',
   deprecated: '已废弃',
-};
-
-export const contentMetricKeys = [
-  'chars',
-  'lines',
-  'htmlTags',
-  'htmlTables',
-  'htmlRows',
-  'htmlCells',
-  'markdownImages',
-  'htmlImages',
-  'importedAssets',
-  'bareUrls',
-  'markdownLinks',
-] as const;
-
-export const knowledgeItemSourceComponents: Components = {
-  a({ children }) {
-    return <span className="knowledge-item-link-text">{children}</span>;
-  },
-  img({ node: _node, ...props }) {
-    return <img {...props} loading="lazy" decoding="async" />;
-  },
 };

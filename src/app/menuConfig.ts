@@ -2,7 +2,7 @@
  * 侧边栏菜单配置
  */
 
-import type { AppMenuItem, SectionId } from '../shared/types/navigation';
+import type { AppMenuItem } from '../shared/types/navigation';
 
 export const appMenuItems: AppMenuItem[] = [
   {
