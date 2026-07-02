@@ -3,14 +3,10 @@
  */
 
 import * as Tooltip from '@radix-ui/react-tooltip';
-import type { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
-interface AppShellProps {
-  children: ReactNode;
-}
-
-function AppShell({ children }: AppShellProps) {
+function AppShell() {
   return (
     <Tooltip.Provider delayDuration={120} skipDelayDuration={80}>
       <div className="app-shell">
@@ -18,7 +14,7 @@ function AppShell({ children }: AppShellProps) {
 
         <main className="main-area">
           <section className="content-shell" aria-label="主内容">
-            {children}
+            <Outlet />
           </section>
         </main>
       </div>

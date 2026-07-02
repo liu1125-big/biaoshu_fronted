@@ -6,6 +6,7 @@ import * as Tooltip from '@radix-ui/react-tooltip';
 import { useState, type ComponentType, type ReactElement, type SVGProps } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { appMenuItems } from '../app/menuConfig';
+import { useAuth } from '../app/contexts/AuthContext';
 import type { AppMenuItem, SectionId } from '../shared/types/navigation';
 import { ArchiveIcon, ChevronIcon, DocumentIcon, ShieldIcon } from '../shared/ui/Icons';
 import logoUrl from '/icon_256.png';
@@ -20,6 +21,7 @@ function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const currentPath = location.pathname;
   const activeSection = (currentPath.replace('/', '') || 'technical-plan') as SectionId;
@@ -78,6 +80,24 @@ function Sidebar() {
           return collapsed ? wrapTooltip(item.label, button) : button;
         })}
       </nav>
+
+      <div className="sidebar-user-card">
+        <span className="sidebar-user-label">当前账号</span>
+        <div className="sidebar-user-content">
+          <div className="sidebar-user-avatar-wrapper">
+            <div className="sidebar-user-avatar">
+              {user ? (user.nickname || user.username).charAt(0).toUpperCase() : '?'}
+            </div>
+            {user && <span className="sidebar-user-status" />}
+          </div>
+          <div className="sidebar-user-info">
+            <span className="sidebar-user-name">{user ? (user.nickname || user.username) : '未登录'}</span>
+            <span className="sidebar-user-role">
+              {user ? `在线 · ${user.role}` : '离线'}
+            </span>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 }

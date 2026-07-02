@@ -1,10 +1,11 @@
 /**
  * Context Providers
- * Toast 通知
+ * Toast 通知、认证状态
  */
 
 import type { ReactNode } from 'react';
 import { ToastProvider } from '../../shared/ui';
+import { AuthProvider } from '../contexts/AuthContext';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -12,9 +13,11 @@ interface AppProvidersProps {
 
 function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ToastProvider>
-      {children}
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        {children}
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 

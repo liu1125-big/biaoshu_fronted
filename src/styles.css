@@ -304,6 +304,101 @@ button {
   border-top: 1px solid var(--yb-border-soft);
 }
 
+/* 侧边栏当前账户卡片 */
+.sidebar-user-card {
+  display: flex;
+  flex-direction: column;
+  margin: 0 16px 16px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.sidebar-user-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+.sidebar-user-label {
+  font-size: 12px;
+  color: #8C93A8;
+  margin-bottom: 10px;
+}
+
+.sidebar-user-content {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-user-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sidebar-user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #5B7CFA 0%, #4F46E5 100%);
+  border-radius: 12px;
+}
+
+.sidebar-user-status {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 10px;
+  height: 10px;
+  background: #22C55E;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+.sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 12px;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #94A3B8;
+  margin-top: 2px;
+}
+
+/* 侧边栏折叠状态下隐藏用户信息 */
+.sidebar.is-collapsed .sidebar-user-info,
+.sidebar.is-collapsed .sidebar-user-label {
+  display: none;
+}
+
+.sidebar.is-collapsed .sidebar-user-card {
+  align-items: center;
+  padding: 12px;
+}
+
 .main-area {
   position: relative;
   display: flex;

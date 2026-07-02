@@ -1,0 +1,542 @@
+/**
+ * 登录页面样式
+ * 左右分栏布局 + Glassmorphism 风格
+ */
+
+.page {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ========== 左侧区域 ========== */
+.left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(180deg, #1e5bf7 0%, #2d4ed9 50%, #1a3db8 100%);
+  overflow: hidden;
+}
+
+/* 光晕效果 */
+.left::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  right: -30%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* 装饰圆形 */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 260px;
+  height: 260px;
+  top: -70px;
+  right: -70px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+}
+
+.circle-2 {
+  width: 180px;
+  height: 180px;
+  top: 15%;
+  right: 8%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+}
+
+.circle-3 {
+  width: 140px;
+  height: 140px;
+  top: 48%;
+  left: -40px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+}
+
+.circle-4 {
+  width: 200px;
+  height: 200px;
+  bottom: -80px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+}
+
+.circle-5 {
+  width: 100px;
+  height: 100px;
+  top: 32%;
+  left: 20%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+}
+
+.circle-6 {
+  width: 70px;
+  height: 70px;
+  top: 62%;
+  left: 12%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+}
+
+.circle-7 {
+  width: 90px;
+  height: 90px;
+  bottom: 28%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+}
+
+/* Logo 区域 */
+.logo-area {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 28px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.logo-lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.logo-line1 {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.1em;
+}
+
+.logo-line2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.08em;
+}
+
+/* 中间大卡片 */
+.center-card {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+}
+
+.glass-card {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.glass-card-image {
+  width: 90%;
+  margin: 0 auto 16px;
+  padding-top: 16px;
+}
+
+.glass-card-image img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.glass-card h3 {
+  margin: 0 20px 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+.glass-card p {
+  margin: 0 20px 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.glass-card p:last-child {
+  margin-bottom: 20px;
+}
+
+/* 底部菜单 */
+.bottom-menu {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 28px 44px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 68px;
+  padding: 0 22px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.26);
+  transform: translateX(5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.menu-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.menu-item:hover .menu-icon {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.menu-text {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ========== 右侧区域 ========== */
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(180deg, #f5f9ff 0%, #eef4ff 100%);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  padding: 0 24px;
+}
+
+/* ========== 登录标题 ========== */
+.login-header {
+  width: 100%;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.login-title {
+  margin: 0 0 6px;
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--yb-text);
+  letter-spacing: 0.02em;
+}
+
+.login-subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--yb-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* ========== 表单 ========== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--yb-text-muted);
+  pointer-events: none;
+}
+
+.input-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.input {
+  width: 100%;
+  height: 54px;
+  padding: 0 16px 0 48px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--yb-text);
+  background: white;
+  border: 2px solid #dce3f0;
+  border-radius: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.input:focus {
+  border-color: var(--yb-primary);
+  box-shadow: 0 0 0 4px rgba(33, 116, 253, 0.08);
+}
+
+.password-input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: var(--yb-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--yb-primary);
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Remember me + 忘记密码 */
+.remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-wrapper input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.checkbox-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid #dce3f0;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.checkbox-wrapper input:checked + .checkbox-custom {
+  background: var(--yb-primary);
+  border-color: var(--yb-primary);
+}
+
+.checkbox-custom svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.checkbox-wrapper input:checked + .checkbox-custom svg {
+  opacity: 1;
+}
+
+.remember-text {
+  margin-left: 8px;
+  font-size: 14px;
+  color: var(--yb-text);
+}
+
+.forgot-link {
+  font-size: 14px;
+  color: var(--yb-primary);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* 登录按钮 */
+.submit-btn {
+  width: 100%;
+  height: 54px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #4b87ff 0%, #5865e8 50%, #4b49e6 100%);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(75, 71, 230, 0.3);
+}
+
+.submit-btn:hover {
+  box-shadow: 0 6px 24px rgba(75, 71, 230, 0.4);
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(75, 71, 230, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 还没有账号 */
+.signup-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--yb-text-muted);
+}
+
+.signup-link {
+  color: var(--yb-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+  margin-top: 32px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--yb-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* 弹窗输入框样式 - 去除左侧图标预留空间 */
+.dialogInput {
+  padding: 0 16px !important;
+}
+
