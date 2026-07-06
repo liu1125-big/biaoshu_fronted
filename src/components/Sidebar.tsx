@@ -81,7 +81,7 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="sidebar-user-card" onClick={() => navigate('/profile')}>
+      <div className="sidebar-user-card" onClick={() => user ? navigate('/profile') : navigate('/login')}>
         <span className="sidebar-user-label">当前账号</span>
         <div className="sidebar-user-content">
           <div className="sidebar-user-avatar-wrapper">
@@ -93,7 +93,7 @@ function Sidebar() {
           <div className="sidebar-user-info">
             <span className="sidebar-user-name">{user ? (user.nickname || user.username) : '未登录'}</span>
             <span className="sidebar-user-role">
-              {user ? `在线 · ${user.role}` : '离线'}
+              {user ? `在线 · ${user.role}` : '离线 · 请先登录'}
             </span>
           </div>
         </div>
