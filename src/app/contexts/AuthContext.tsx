@@ -3,12 +3,8 @@
  */
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-
-export interface User {
-  username: string;
-  nickname?: string;
-  role: string;
-}
+import { apiClient } from '../../shared/api/apiClient';
+import type { User } from '../../features/auth/types';
 
 interface AuthContextValue {
   user: User | null;
@@ -48,8 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
+  const logout = useCallback(async () => {
+    try {
+      await apiClient.auth.logout();
+    } finally {
+      setUser(null);
+    }
   }, []);
 
   return (

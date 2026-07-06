@@ -6,9 +6,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../../shared/ui';
 import { useAuth } from './useAuth';
-import type { User } from '../types';
+import { apiClient } from '../../../shared/api/apiClient';
 
-const MOCK_USER = { username: 'admin', password: '123456' };
 const STORAGE_KEY = 'rememberedUsername';
 
 export function useLoginForm() {
@@ -51,16 +50,18 @@ export function useLoginForm() {
   }, [remember, username]);
 
   // 登录提交
-  const handleLogin = useCallback((e: React.FormEvent) => {
+  const handleLogin = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim()) return showToast('请输入账号', 'error');
     if (!password.trim()) return showToast('请输入密码', 'error');
-    if (username === MOCK_USER.username && password === MOCK_USER.password) {
-      login({ username, nickname: username, role: '超级管理员' } as User);
+
+    try {
+      const data = await apiClient.auth.login(username, password);
+      login(data.user);
       showToast('登录成功', 'success');
       navigate('/technical-plan');
-    } else {
-      showToast('账号或密码错误', 'error');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : '登录失败', 'error');
     }
   }, [username, password, login, navigate, showToast]);
 

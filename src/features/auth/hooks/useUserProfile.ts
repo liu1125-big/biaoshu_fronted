@@ -1,29 +1,13 @@
 /**
- * 用户详情 Hook - 获取用户信息，支持 API fallback 到 mock 数据
+ * 用户详情 Hook - 调用 /api/auth/me 获取用户信息
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../../../shared/api/apiClient';
-import { useAuth } from './useAuth';
-import type { UserProfile } from '../types';
-
-// Mock 数据 fallback
-const MOCK_USER_PROFILE: UserProfile = {
-  id: '1',
-  username: 'admin',
-  nickname: 'admin',
-  role: '超级管理员',
-  email: 'admin@example.com',
-  phone: '138 0013 8000',
-  loginTime: '2026-07-02 13:43',
-  permissionLevel: '超级管理员',
-  accessScope: '全部业务模块',
-  status: 'active',
-  hasPermissionManagement: true,
-};
+import type { User } from '../types';
 
 interface UseUserProfileReturn {
-  profile: UserProfile | null;
+  profile: User | null;
   loading: boolean;
   error: string | null;
   refresh: () => void;
@@ -31,39 +15,28 @@ interface UseUserProfileReturn {
 
 /**
  * 获取用户详情 Hook
- * - 优先从 API 获取
- * - API 失败时使用 mock 数据（开发阶段）
+ * 调用 /api/auth/me 获取当前登录用户信息
  */
 export function useUserProfile(): UseUserProfileReturn {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = useCallback(async () => {
-    if (!user?.username) {
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
     setError(null);
-
     try {
-      const data = await apiClient.user.getProfile(user.username);
+      const data = await apiClient.auth.me();
       setProfile(data);
     } catch (err) {
-      // API 失败时使用 mock 数据
-      console.warn('[useUserProfile] API 不可用，使用 mock 数据:', err);
-      setProfile(MOCK_USER_PROFILE);
-      setError(null);
+      setError(err instanceof Error ? err.message : '获取用户信息失败');
     } finally {
       setLoading(false);
     }
-  }, [user?.username]);
+  }, []);
 
   useEffect(() => {
-    fetchProfile();
+    void fetchProfile();
   }, [fetchProfile]);
 
   return {

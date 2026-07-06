@@ -3,9 +3,15 @@
  */
 
 export interface User {
+  id: string;
   username: string;
+  name?: string;
   nickname?: string;
-  role: string;
+  status: string;
+  roles: Array<{ id: string; code: string; name: string; status: string }>;
+  last_login_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface UserProfile {
@@ -20,6 +26,14 @@ export interface UserProfile {
   accessScope?: string;
   status?: 'active' | 'inactive' | 'disabled';
   hasPermissionManagement?: boolean;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+  user: User;
 }
 
 export interface LoginCredentials {

@@ -8,4 +8,8 @@ export const ENDPOINTS = {
   PROJECT: '/api/projects/{project_id}',
   USER_PROFILE: '/api/users/{user_id}',
   USER_UPDATE: '/api/users/{user_id}',
+  AUTH_LOGIN: '/api/auth/login',
+  AUTH_LOGOUT: '/api/auth/logout',
+  AUTH_REFRESH: '/api/auth/refresh',
+  AUTH_ME: '/api/auth/me',
 } as const;

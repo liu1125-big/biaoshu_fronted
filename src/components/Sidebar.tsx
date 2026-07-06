@@ -86,14 +86,14 @@ function Sidebar() {
         <div className="sidebar-user-content">
           <div className="sidebar-user-avatar-wrapper">
             <div className="sidebar-user-avatar">
-              {user ? (user.nickname || user.username).charAt(0).toUpperCase() : '?'}
+              {user ? (user.username).charAt(0).toUpperCase() : '?'}
             </div>
             {user && <span className="sidebar-user-status" />}
           </div>
           <div className="sidebar-user-info">
-            <span className="sidebar-user-name">{user ? (user.nickname || user.username) : '未登录'}</span>
+            <span className="sidebar-user-name">{user ? user.username : '未登录'}</span>
             <span className="sidebar-user-role">
-              {user ? `在线 · ${user.role}` : '离线 · 请先登录'}
+              {user ? `在线 · ${user.roles?.[0]?.name || user.roles?.[0]?.code || ''}` : '离线 · 请先登录'}
             </span>
           </div>
         </div>

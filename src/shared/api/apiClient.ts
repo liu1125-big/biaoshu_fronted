@@ -4,9 +4,93 @@
 
 import axios from 'axios';
 import { ENDPOINTS } from './endpoints';
-import type { UserProfile } from '../../features/auth/types';
+import type { UserProfile, LoginResponse } from '../../features/auth/types';
 
-const http = axios.create({ timeout: 300000 });
+const http = axios.create({
+  timeout: 300000,
+});
+
+// Token 存储 key
+const STORAGE_KEYS = {
+  ACCESS_TOKEN: 'auth_access_token',
+  REFRESH_TOKEN: 'auth_refresh_token',
+};
+
+// 请求拦截器 - 自动带上 Authorization header
+http.interceptors.request.use((config) => {
+  const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// 是否正在刷新 token
+let isRefreshing = false;
+// 等待刷新完成的请求队列
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+const subscribeTokenRefresh = (callback: (token: string) => void) => {
+  refreshSubscribers.push(callback);
+};
+
+const onTokenRefreshed = (token: string) => {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
+// 响应拦截器 - 处理 401 错误并刷新 token
+http.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 如果是 401 错误且不是刷新请求
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      if (isRefreshing) {
+        // 等待刷新完成
+        return new Promise((resolve) => {
+          subscribeTokenRefresh((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(http(originalRequest));
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+        if (!refreshToken) throw new Error('No refresh token');
+
+        const response = await http.post(ENDPOINTS.AUTH_REFRESH, {
+          refresh_token: refreshToken,
+        });
+
+        if (response.data.code !== 0) throw new Error(response.data.message);
+
+        const { access_token } = response.data.data;
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, access_token);
+
+        onTokenRefreshed(access_token);
+        isRefreshing = false;
+
+        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        return http(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        // 刷新失败，清除所有 token，跳转到登录页
+        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const apiClient = {
   markdown: {
@@ -17,38 +101,185 @@ export const apiClient = {
     },
   },
 
-  projects: {
-    list: async () => {
-      const { data } = await http.get(ENDPOINTS.PROJECTS);
-      // 后端直接返回数组，无需包装
-      return data as Array<{
-        id: string;
-        name: string;
-        status: string;
-        created_at: string;
-        updated_at: string;
-        tender_file_name?: string;
-        outline_section_count?: number;
-        content_word_count?: number;
-      }>;
+  auth: {
+    login: async (username: string, password: string): Promise<LoginResponse> => {
+      try {
+        const response = await http.post(ENDPOINTS.AUTH_LOGIN, { username, password });
+        const data = response.data;
+        if (data.code !== 0) throw new Error(data.message || '登录失败');
+        // 存储 token
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.data.access_token);
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.data.refresh_token);
+        return data.data;
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const responseData = err.response?.data;
+          // 处理业务错误码 (如 40101)
+          if (responseData?.message) {
+            throw new Error(responseData.message);
+          }
+          // 处理 FastAPI/Pydantic 验证错误格式
+          if (responseData?.detail) {
+            const detail = responseData.detail;
+            if (Array.isArray(detail) && detail[0]?.msg) {
+              throw new Error(detail[0].msg);
+            } else if (typeof detail === 'string') {
+              throw new Error(detail);
+            }
+          }
+        }
+        if (err instanceof Error) throw err;
+        throw new Error('登录失败');
+      }
     },
-    create: async (payload: { name: string; tender_file_name?: string }) => {
-      const { data } = await http.post(ENDPOINTS.PROJECTS, payload);
-      return data;
+    logout: async () => {
+      const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+      try {
+        const response = await http.post(ENDPOINTS.AUTH_LOGOUT, {
+          refresh_token: refreshToken,
+        });
+        if (response.data.code !== 0) throw new Error(response.data.message || '退出登录失败');
+      } catch (err: unknown) {
+        // 即使接口失败，也清除本地 token
+        if (axios.isAxiosError(err)) {
+          const responseData = err.response?.data;
+          if (responseData?.message) {
+            throw new Error(responseData.message);
+          }
+          if (responseData?.detail) {
+            const detail = responseData.detail;
+            if (Array.isArray(detail) && detail[0]?.msg) {
+              throw new Error(detail[0].msg);
+            } else if (typeof detail === 'string') {
+              throw new Error(detail);
+            }
+          }
+        }
+        if (err instanceof Error) throw err;
+        throw new Error('退出登录失败');
+      } finally {
+        // 清除 token
+        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+      }
     },
-    get: async (projectId: string) => {
-      const { data } = await http.get(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
-      return data;
-    },
-    update: async (projectId: string, payload: { name?: string; status?: string; tender_file_name?: string; outline_section_count?: number; content_word_count?: number }) => {
-      const { data } = await http.put(ENDPOINTS.PROJECT.replace('{project_id}', projectId), payload);
-      return data;
-    },
-    delete: async (projectId: string) => {
-      const { data } = await http.delete(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
-      return data;
+    me: async () => {
+      try {
+        const response = await http.get(ENDPOINTS.AUTH_ME);
+        if (response.data.code !== 0) throw new Error(response.data.message || '获取用户信息失败');
+        return response.data.data;
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const responseData = err.response?.data;
+          if (responseData?.message) {
+            throw new Error(responseData.message);
+          }
+          if (responseData?.detail) {
+            const detail = responseData.detail;
+            if (Array.isArray(detail) && detail[0]?.msg) {
+              throw new Error(detail[0].msg);
+            } else if (typeof detail === 'string') {
+              throw new Error(detail);
+            }
+          }
+        }
+        if (err instanceof Error) throw err;
+        throw new Error('获取用户信息失败');
+      }
     },
   },
+
+  projects: (() => {
+    type ProjectData = {
+      id: string;
+      name: string;
+      status: string;
+      created_at: string;
+      updated_at: string;
+      tender_file_name?: string;
+      outline_section_count?: number;
+      content_word_count?: number;
+    };
+
+    const mockProjects: ProjectData[] = [
+      {
+        id: 'proj-1',
+        name: '智慧城市投标文件',
+        status: 'in-progress',
+        created_at: '2026-07-01T10:00:00Z',
+        updated_at: '2026-07-06T09:30:00Z',
+        tender_file_name: '智慧城市建设方案.pdf',
+        outline_section_count: 12,
+        content_word_count: 8500,
+      },
+      {
+        id: 'proj-2',
+        name: '数据中心建设项目',
+        status: 'draft',
+        created_at: '2026-07-03T14:20:00Z',
+        updated_at: '2026-07-03T14:20:00Z',
+        tender_file_name: '数据中心技术方案.docx',
+        outline_section_count: 0,
+        content_word_count: 0,
+      },
+      {
+        id: 'proj-3',
+        name: '医院信息化系统',
+        status: 'completed',
+        created_at: '2026-06-15T08:00:00Z',
+        updated_at: '2026-06-28T16:45:00Z',
+        tender_file_name: '医院信息化投标书.pdf',
+        outline_section_count: 15,
+        content_word_count: 12000,
+      },
+    ];
+
+    const delay = (ms = 300) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+    const newId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+    return {
+      list: async () => {
+        await delay();
+        return [...mockProjects];
+      },
+      create: async (payload: { name: string; tender_file_name?: string }) => {
+        await delay();
+        const now = new Date().toISOString();
+        const newProject: ProjectData = {
+          id: newId('proj'),
+          name: payload.name,
+          status: 'draft',
+          created_at: now,
+          updated_at: now,
+          tender_file_name: payload.tender_file_name,
+          outline_section_count: 0,
+          content_word_count: 0,
+        };
+        mockProjects.push(newProject);
+        return newProject;
+      },
+      get: async (projectId: string) => {
+        await delay();
+        const project = mockProjects.find((p) => p.id === projectId);
+        if (!project) throw new Error('项目不存在');
+        return { ...project };
+      },
+      update: async (projectId: string, payload: { name?: string; status?: string; tender_file_name?: string; outline_section_count?: number; content_word_count?: number }) => {
+        await delay();
+        const project = mockProjects.find((p) => p.id === projectId);
+        if (!project) throw new Error('项目不存在');
+        Object.assign(project, payload, { updated_at: new Date().toISOString() });
+        return { ...project };
+      },
+      delete: async (projectId: string) => {
+        await delay();
+        const idx = mockProjects.findIndex((p) => p.id === projectId);
+        if (idx < 0) throw new Error('项目不存在');
+        mockProjects.splice(idx, 1);
+        return { success: true };
+      },
+    };
+  })(),
 
   user: {
     getProfile: async (userId: string): Promise<UserProfile> => {

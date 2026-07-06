@@ -11,7 +11,7 @@ import styles from '../css/user-profile.module.css';
 
 export default function UserProfilePage() {
   const { user, logout } = useAuth();
-  const { profile, loading } = useUserProfile();
+  const { profile, loading, error } = useUserProfile();
   const navigate = useNavigate();
 
   // 弹窗状态
@@ -66,6 +66,44 @@ export default function UserProfilePage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerText}>
+              <span className={styles.headerKicker}>用户模块</span>
+              <h1 className={styles.headerTitle}>个人信息与权限管理</h1>
+            </div>
+          </div>
+          <div className={styles.headerRight}>
+            <button className={styles.logoutBtn} onClick={handleLogout}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              退出登录
+            </button>
+          </div>
+        </div>
+        <div className={styles.cards} style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+          <span style={{ color: '#ef4444' }}>{error}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // 格式化时间
+  const formatTime = (timeStr?: string) => {
+    if (!timeStr) return '-';
+    const date = new Date(timeStr);
+    return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  };
+
+  // 获取角色名称
+  const roleName = profile?.roles?.[0]?.name || '-';
+
   return (
     <div className={styles.page}>
       {/* 顶部标题栏 */}
@@ -99,14 +137,14 @@ export default function UserProfilePage() {
           {/* 头像区域 */}
           <div className={styles.profileSection}>
             <div className={styles.avatarWrapper}>
-              <div className={styles.avatar}>{(profile?.nickname || profile?.username)?.[0]?.toUpperCase() || 'U'}</div>
+              <div className={styles.avatar}>{(profile?.username)?.[0]?.toUpperCase() || 'U'}</div>
               <span className={styles.onlineDot} />
             </div>
             <div className={styles.profileInfo}>
-              <span className={styles.userName}>{profile?.nickname || profile?.username}</span>
+              <span className={styles.userName}>{profile?.username}</span>
               <div className={styles.profileTags}>
-                <span className={styles.profileTag}>{profile?.role}</span>
-                <span className={styles.profileTag}>登录于 {profile?.loginTime}</span>
+                <span className={styles.profileTag}>{roleName}</span>
+                <span className={styles.profileTag}>登录于 {formatTime(profile?.last_login_at)}</span>
               </div>
             </div>
           </div>
@@ -127,19 +165,19 @@ export default function UserProfilePage() {
           <div className={styles.infoGrid}>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>用户名</span>
-              <span className={styles.infoValue}>{profile?.nickname || profile?.username}</span>
+              <span className={styles.infoValue}>{profile?.username}</span>
+            </div>
+            <div className={styles.infoCard}>
+              <span className={styles.infoLabel}>姓名</span>
+              <span className={styles.infoValue}>{profile?.name || '-'}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>角色</span>
-              <span className={styles.infoValue}>{profile?.role}</span>
+              <span className={styles.infoValue}>{roleName}</span>
             </div>
             <div className={styles.infoCard}>
-              <span className={styles.infoLabel}>邮箱</span>
-              <span className={styles.infoValue}>{profile?.email || '-'}</span>
-            </div>
-            <div className={styles.infoCard}>
-              <span className={styles.infoLabel}>手机号</span>
-              <span className={styles.infoValue}>{profile?.phone || '-'}</span>
+              <span className={styles.infoLabel}>状态</span>
+              <span className={styles.infoValue}>{profile?.status === 'enabled' ? '启用' : profile?.status || '-'}</span>
             </div>
           </div>
 
@@ -180,26 +218,26 @@ export default function UserProfilePage() {
           <div className={styles.infoGrid}>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>权限级别</span>
-              <span className={styles.infoValue}>{profile?.permissionLevel || '-'}</span>
+              <span className={styles.infoValue}>{roleName}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>访问范围</span>
-              <span className={styles.infoValue}>{profile?.accessScope || '-'}</span>
+              <span className={styles.infoValue}>{profile?.roles?.[0]?.code === 'admin' ? '全部业务模块' : '受限模块'}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>状态</span>
-              <span className={styles.infoValue}>{profile?.status === 'active' ? '已生效' : profile?.status || '-'}</span>
+              <span className={styles.infoValue}>{profile?.status === 'enabled' ? '已生效' : '已禁用'}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>管理入口</span>
-              <span className={styles.infoValue}>{profile?.hasPermissionManagement ? '支持权限管理' : '-'}</span>
+              <span className={styles.infoValue}>{profile?.roles?.[0]?.code === 'admin' ? '支持权限管理' : '不支持'}</span>
             </div>
           </div>
 
           {/* 角色说明 */}
           <div className={styles.sectionTitle}>角色说明</div>
           <div className={styles.roleDesc}>
-            <p>超级管理员拥有系统全部权限，可管理所有业务模块，包括标书生成、知识库管理、文档匿名化处理等，并能进行用户权限管理。</p>
+            <p>{roleName === '系统管理员' ? '管理员拥有系统全部权限，可管理所有业务模块。' : '当前用户权限受限，部分功能无法访问。'}</p>
           </div>
 
           {/* 权限管理按钮 */}
@@ -270,19 +308,19 @@ export default function UserProfilePage() {
           <div className={styles.infoGrid}>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>权限级别</span>
-              <span className={styles.infoValue}>{profile?.permissionLevel || '-'}</span>
+              <span className={styles.infoValue}>{roleName}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>访问范围</span>
-              <span className={styles.infoValue}>{profile?.accessScope || '-'}</span>
+              <span className={styles.infoValue}>{profile?.roles?.[0]?.code === 'admin' ? '全部业务模块' : '受限模块'}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>状态</span>
-              <span className={styles.infoValue}>{profile?.status === 'active' ? '已生效' : profile?.status || '-'}</span>
+              <span className={styles.infoValue}>{profile?.status === 'enabled' ? '已生效' : '已禁用'}</span>
             </div>
             <div className={styles.infoCard}>
               <span className={styles.infoLabel}>管理入口</span>
-              <span className={styles.infoValue}>{profile?.hasPermissionManagement ? '支持' : '不支持'}</span>
+              <span className={styles.infoValue}>{profile?.roles?.[0]?.code === 'admin' ? '支持' : '不支持'}</span>
             </div>
           </div>
         }
