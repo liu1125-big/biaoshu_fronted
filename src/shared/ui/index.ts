@@ -18,3 +18,5 @@ export type { ToastAction, ToastOptions, ToastType } from './ToastProvider';
 export { default as MarkdownRenderer } from './MarkdownRenderer';
 export { default as MarkdownEditor } from './MarkdownEditor';
 export type { MarkdownEditorProps } from './MarkdownEditor';
+export { Dialog } from './Dialog';
+export type { DialogField } from './Dialog';

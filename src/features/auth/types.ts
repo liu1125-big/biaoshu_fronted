@@ -8,6 +8,20 @@ export interface User {
   role: string;
 }
 
+export interface UserProfile {
+  id: string;
+  username: string;
+  nickname?: string;
+  role: string;
+  email?: string;
+  phone?: string;
+  loginTime?: string;
+  permissionLevel?: string;
+  accessScope?: string;
+  status?: 'active' | 'inactive' | 'disabled';
+  hasPermissionManagement?: boolean;
+}
+
 export interface LoginCredentials {
   username: string;
   password: string;

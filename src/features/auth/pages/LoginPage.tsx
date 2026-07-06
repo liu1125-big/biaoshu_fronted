@@ -2,10 +2,10 @@
  * 登录页面
  */
 
-import * as Dialog from '@radix-ui/react-dialog';
 import { DocumentIcon, UserIcon, LockIcon, EyeIcon, EyeOffIcon, BoltIcon, DatabaseIcon, ShieldIcon, CheckIcon } from '../../../shared/ui/Icons';
+import { Dialog } from '../../../shared/ui/Dialog';
 import { useLoginForm } from '../hooks/useLoginForm';
-import styles from './LoginPage.module.css';
+import styles from '../css/login.module.css';
 
 const menuItems = [
   { Icon: BoltIcon, text: '智能解析招标文件，一键生成标书' },
@@ -115,65 +115,41 @@ export default function LoginPage() {
       </div>
 
       {/* 找回密码弹窗 */}
-      <Dialog.Root open={forgotOpen} onOpenChange={(open) => !open && closeForgot()}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="content-regenerate-modal" />
-          <Dialog.Content className="project-dialog-card" style={{ maxHeight: 'calc(100vh - 60px)' }}>
-            <div className="knowledge-migration-head">
-              <span className="section-kicker">找回密码</span>
-              <Dialog.Title>找回密码</Dialog.Title>
-              <Dialog.Description>请输入以下信息重置密码。</Dialog.Description>
-            </div>
-            <div className="project-dialog-body">
-              {[
-                { label: '手机号', value: forgotPhone, setValue: setForgotPhone, type: 'tel', placeholder: '请输入手机号' },
-                { label: '重置密码', value: forgotPwd, setValue: setForgotPwd, type: 'password', placeholder: '请输入新密码' },
-                { label: '确认重置密码', value: forgotConfirmPwd, setValue: setForgotConfirmPwd, type: 'password', placeholder: '请再次输入新密码' },
-              ].map(({ label, value, setValue, type, placeholder }) => (
-                <label key={label} className="project-dialog-field">
-                  <span>{label}</span>
-                  <input type={type} className={`${styles.input} ${styles.dialogInput}`} placeholder={placeholder} style={{ marginTop: 6 }} value={value} onChange={(e) => setValue(e.target.value)} />
-                </label>
-              ))}
-            </div>
-            <div className="content-regenerate-actions">
-              <button type="button" className="secondary-action" onClick={closeForgot}>取消</button>
-              <button type="button" className="primary-action" onClick={handleForgotSubmit}>确认</button>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <Dialog
+        open={forgotOpen}
+        onOpenChange={setForgotOpen}
+        kicker="找回密码"
+        title="找回密码"
+        description="请输入以下信息重置密码。"
+        fields={[
+          { label: '手机号', value: forgotPhone, setValue: setForgotPhone, type: 'tel', placeholder: '请输入手机号' },
+          { label: '重置密码', value: forgotPwd, setValue: setForgotPwd, type: 'password', placeholder: '请输入新密码' },
+          { label: '确认重置密码', value: forgotConfirmPwd, setValue: setForgotConfirmPwd, type: 'password', placeholder: '请再次输入新密码' },
+        ]}
+        inputClassName={`${styles.input} ${styles.dialogInput}`}
+        onConfirm={handleForgotSubmit}
+        onCancel={closeForgot}
+      />
 
       {/* 注册弹窗 */}
-      <Dialog.Root open={registerOpen} onOpenChange={(open) => !open && closeRegister()}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="content-regenerate-modal" />
-          <Dialog.Content className="project-dialog-card" style={{ maxWidth: 600, width: 'calc(100vw - 40px)', maxHeight: 'calc(100vh - 60px)' }}>
-            <div className="knowledge-migration-head" style={{ marginBottom: 12 }}>
-              <span className="section-kicker">创建账户</span>
-              <Dialog.Title>创建账户</Dialog.Title>
-              <Dialog.Description>填写以下信息以创建新账户。</Dialog.Description>
-            </div>
-            <div className="project-dialog-body" style={{ marginBottom: 16 }}>
-              {[
-                { label: '账户', value: regAccount, setValue: setRegAccount, type: 'text', placeholder: '请输入账户名' },
-                { label: '手机号', value: regPhone, setValue: setRegPhone, type: 'tel', placeholder: '请输入手机号' },
-                { label: '密码', value: regPwd, setValue: setRegPwd, type: 'password', placeholder: '请输入密码' },
-                { label: '确认密码', value: regConfirmPwd, setValue: setRegConfirmPwd, type: 'password', placeholder: '请再次输入密码' },
-              ].map(({ label, value, setValue, type, placeholder }) => (
-                <label key={label} className="project-dialog-field" style={{ marginTop: 10 }}>
-                  <span>{label}</span>
-                  <input type={type} className={`${styles.input} ${styles.dialogInput}`} placeholder={placeholder} style={{ marginTop: 4, height: 44 }} value={value} onChange={(e) => setValue(e.target.value)} />
-                </label>
-              ))}
-            </div>
-            <div className="content-regenerate-actions">
-              <button type="button" className="secondary-action" onClick={closeRegister}>取消</button>
-              <button type="button" className="primary-action" onClick={handleRegisterSubmit}>注册</button>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <Dialog
+        open={registerOpen}
+        onOpenChange={setRegisterOpen}
+        kicker="创建账户"
+        title="创建账户"
+        description="填写以下信息以创建新账户。"
+        maxWidth={600}
+        fields={[
+          { label: '账户', value: regAccount, setValue: setRegAccount, type: 'text', placeholder: '请输入账户名' },
+          { label: '手机号', value: regPhone, setValue: setRegPhone, type: 'tel', placeholder: '请输入手机号' },
+          { label: '密码', value: regPwd, setValue: setRegPwd, type: 'password', placeholder: '请输入密码' },
+          { label: '确认密码', value: regConfirmPwd, setValue: setRegConfirmPwd, type: 'password', placeholder: '请再次输入密码' },
+        ]}
+        inputClassName={`${styles.input} ${styles.dialogInput}`}
+        inputStyle={{ marginTop: 4 }}
+        onConfirm={handleRegisterSubmit}
+        onCancel={closeRegister}
+      />
     </div>
   );
 }

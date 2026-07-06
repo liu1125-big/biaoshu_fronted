@@ -81,7 +81,7 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="sidebar-user-card">
+      <div className="sidebar-user-card" onClick={() => navigate('/profile')}>
         <span className="sidebar-user-label">当前账号</span>
         <div className="sidebar-user-content">
           <div className="sidebar-user-avatar-wrapper">

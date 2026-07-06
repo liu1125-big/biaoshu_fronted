@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 import { ENDPOINTS } from './endpoints';
+import type { UserProfile } from '../../features/auth/types';
 
 const http = axios.create({ timeout: 300000 });
 
@@ -46,6 +47,19 @@ export const apiClient = {
     delete: async (projectId: string) => {
       const { data } = await http.delete(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
       return data;
+    },
+  },
+
+  user: {
+    getProfile: async (userId: string): Promise<UserProfile> => {
+      const { data } = await http.get(ENDPOINTS.USER_PROFILE.replace('{user_id}', userId));
+      if (data.code !== 200) throw new Error(data.message || '获取用户信息失败');
+      return data.data;
+    },
+    updateProfile: async (userId: string, payload: Partial<UserProfile>) => {
+      const { data } = await http.put(ENDPOINTS.USER_UPDATE.replace('{user_id}', userId), payload);
+      if (data.code !== 200) throw new Error(data.message || '更新用户信息失败');
+      return data.data;
     },
   },
 

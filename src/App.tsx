@@ -8,6 +8,7 @@ import TechnicalPlanEntry from './features/technical-plan/pages/TechnicalPlanEnt
 import KnowledgeBasePage from './features/knowledge-base/pages/KnowledgeBasePage';
 import AnonymousPage from './features/anonymous/pages/AnonymousPage';
 import LoginPage from './features/auth/pages/LoginPage';
+import UserProfilePage from './features/auth/pages/UserProfilePage';
 import AppShell from './components/AppShell';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="technical-plan" element={<TechnicalPlanEntry />} />
             <Route path="document-knowledge-base" element={<KnowledgeBasePage />} />
             <Route path="anonymous" element={<AnonymousPage />} />
+            <Route path="profile" element={<UserProfilePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
