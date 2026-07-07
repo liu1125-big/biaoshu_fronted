@@ -103,29 +103,35 @@ export const apiClient = {
 
   auth: {
     login: async (username: string, password: string): Promise<LoginResponse> => {
+      // Mock 数据
+      const mockLogin = (): LoginResponse => {
+        const mockUser = { id: '1', username: username || 'admin', name: '管理员', status: 'enabled', roles: [{ id: '1', code: 'admin', name: '系统管理员', status: 'enabled' }] };
+        return { access_token: 'mock_token_' + Date.now(), refresh_token: 'mock_refresh_' + Date.now(), token_type: 'Bearer', expires_in: 3600, user: mockUser };
+      };
+
       try {
         const response = await http.post(ENDPOINTS.AUTH_LOGIN, { username, password });
         const data = response.data;
         if (data.code !== 0) throw new Error(data.message || '登录失败');
-        // 存储 token
         localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, data.data.access_token);
         localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, data.data.refresh_token);
         return data.data;
       } catch (err: unknown) {
+        // 网络错误或500时使用 mock 兜底
+        if (axios.isAxiosError(err) && (err.code === 'ERR_NETWORK' || err.code === 'ECONNREFUSED' || !err.response || err.response?.status === 500)) {
+          console.warn('[Mock] 登录接口不可用，使用 mock 数据');
+          const mockData = mockLogin();
+          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, mockData.access_token);
+          localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, mockData.refresh_token);
+          return mockData;
+        }
         if (axios.isAxiosError(err)) {
           const responseData = err.response?.data;
-          // 处理业务错误码 (如 40101)
-          if (responseData?.message) {
-            throw new Error(responseData.message);
-          }
-          // 处理 FastAPI/Pydantic 验证错误格式
+          if (responseData?.message) throw new Error(responseData.message);
           if (responseData?.detail) {
             const detail = responseData.detail;
-            if (Array.isArray(detail) && detail[0]?.msg) {
-              throw new Error(detail[0].msg);
-            } else if (typeof detail === 'string') {
-              throw new Error(detail);
-            }
+            if (Array.isArray(detail) && detail[0]?.msg) throw new Error(detail[0].msg);
+            else if (typeof detail === 'string') throw new Error(detail);
           }
         }
         if (err instanceof Error) throw err;
