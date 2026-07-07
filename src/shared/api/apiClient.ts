@@ -196,93 +196,77 @@ export const apiClient = {
   },
 
   projects: (() => {
-    type ProjectData = {
-      id: string;
-      name: string;
-      status: string;
-      created_at: string;
-      updated_at: string;
-      tender_file_name?: string;
-      outline_section_count?: number;
-      content_word_count?: number;
-    };
-
-    const mockProjects: ProjectData[] = [
-      {
-        id: 'proj-1',
-        name: '智慧城市投标文件',
-        status: 'in-progress',
-        created_at: '2026-07-01T10:00:00Z',
-        updated_at: '2026-07-06T09:30:00Z',
-        tender_file_name: '智慧城市建设方案.pdf',
-        outline_section_count: 12,
-        content_word_count: 8500,
-      },
-      {
-        id: 'proj-2',
-        name: '数据中心建设项目',
-        status: 'draft',
-        created_at: '2026-07-03T14:20:00Z',
-        updated_at: '2026-07-03T14:20:00Z',
-        tender_file_name: '数据中心技术方案.docx',
-        outline_section_count: 0,
-        content_word_count: 0,
-      },
-      {
-        id: 'proj-3',
-        name: '医院信息化系统',
-        status: 'completed',
-        created_at: '2026-06-15T08:00:00Z',
-        updated_at: '2026-06-28T16:45:00Z',
-        tender_file_name: '医院信息化投标书.pdf',
-        outline_section_count: 15,
-        content_word_count: 12000,
-      },
+    // Mock 数据
+    const mockProjects = [
+      { id: 'proj-1', name: '智慧城市投标文件', code: 'PRJ001', owner_id: 'owner-1', status: 'in-progress', bid_deadline: '2026-08-01T00:00:00Z', description: '智慧城市投标文件项目', created_at: '2026-07-01T10:00:00Z', updated_at: '2026-07-06T09:30:00Z' },
+      { id: 'proj-2', name: '数据中心建设项目', code: 'PRJ002', owner_id: 'owner-1', status: 'draft', bid_deadline: '2026-09-01T00:00:00Z', description: '数据中心建设项目', created_at: '2026-07-03T14:20:00Z', updated_at: '2026-07-03T14:20:00Z' },
+      { id: 'proj-3', name: '医院信息化系统', code: 'PRJ003', owner_id: 'owner-2', status: 'completed', bid_deadline: '2026-07-15T00:00:00Z', description: '医院信息化系统投标', created_at: '2026-06-15T08:00:00Z', updated_at: '2026-06-28T16:45:00Z' },
     ];
 
-    const delay = (ms = 300) => new Promise<void>((resolve) => setTimeout(resolve, ms));
-    const newId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-
     return {
-      list: async () => {
-        await delay();
-        return [...mockProjects];
+      list: async (params?: { page?: number; page_size?: number; keyword?: string; status?: string; owner_id?: string; start_date?: string; end_date?: string; sort_by?: string; sort_order?: string }) => {
+        try {
+          const { data } = await http.get(ENDPOINTS.PROJECTS, { params });
+          if (data.code !== 0) throw new Error(data.message || '获取项目列表失败');
+          return data.data;
+        } catch (err) {
+          console.warn('[Mock] 项目列表接口不可用，使用 mock 数据');
+          const page = params?.page || 1;
+          const page_size = params?.page_size || 20;
+          const filtered = mockProjects.filter(p => !params?.status || p.status === params.status);
+          return { items: filtered, pagination: { page, page_size, total: filtered.length } };
+        }
       },
-      create: async (payload: { name: string; tender_file_name?: string }) => {
-        await delay();
-        const now = new Date().toISOString();
-        const newProject: ProjectData = {
-          id: newId('proj'),
-          name: payload.name,
-          status: 'draft',
-          created_at: now,
-          updated_at: now,
-          tender_file_name: payload.tender_file_name,
-          outline_section_count: 0,
-          content_word_count: 0,
-        };
-        mockProjects.push(newProject);
-        return newProject;
+      create: async (payload: { name: string; bid_deadline?: string; description?: string }) => {
+        try {
+          const { data } = await http.post(ENDPOINTS.PROJECTS, payload);
+          if (data.code !== 0) throw new Error(data.message || '创建项目失败');
+          return data.data;
+        } catch (err) {
+          console.warn('[Mock] 创建项目接口不可用，使用 mock 数据');
+          const now = new Date().toISOString();
+          const newProject = { name: payload.name, id: `proj-${Date.now()}`, code: `PRJ${String(mockProjects.length + 1).padStart(3, '0')}`, owner_id: 'owner-1', status: 'draft', bid_deadline: payload.bid_deadline || now, description: payload.description || '', created_at: now, updated_at: now };
+          mockProjects.push(newProject);
+          return newProject;
+        }
       },
       get: async (projectId: string) => {
-        await delay();
-        const project = mockProjects.find((p) => p.id === projectId);
-        if (!project) throw new Error('项目不存在');
-        return { ...project };
+        try {
+          const { data } = await http.get(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
+          if (data.code !== 0) throw new Error(data.message || '获取项目详情失败');
+          return data.data;
+        } catch (err) {
+          console.warn('[Mock] 项目详情接口不可用，使用 mock 数据');
+          const project = mockProjects.find((p) => p.id === projectId);
+          if (!project) throw new Error('项目不存在');
+          return { ...project };
+        }
       },
-      update: async (projectId: string, payload: { name?: string; status?: string; tender_file_name?: string; outline_section_count?: number; content_word_count?: number }) => {
-        await delay();
-        const project = mockProjects.find((p) => p.id === projectId);
-        if (!project) throw new Error('项目不存在');
-        Object.assign(project, payload, { updated_at: new Date().toISOString() });
-        return { ...project };
+      update: async (projectId: string, payload: { name?: string; bid_deadline?: string; description?: string; status?: string }) => {
+        try {
+          const { data } = await http.put(ENDPOINTS.PROJECT.replace('{project_id}', projectId), payload);
+          if (data.code !== 0) throw new Error(data.message || '更新项目失败');
+          return data.data;
+        } catch (err) {
+          console.warn('[Mock] 更新项目接口不可用，使用 mock 数据');
+          const project = mockProjects.find((p) => p.id === projectId);
+          if (!project) throw new Error('项目不存在');
+          Object.assign(project, payload, { updated_at: new Date().toISOString() });
+          return { ...project };
+        }
       },
       delete: async (projectId: string) => {
-        await delay();
-        const idx = mockProjects.findIndex((p) => p.id === projectId);
-        if (idx < 0) throw new Error('项目不存在');
-        mockProjects.splice(idx, 1);
-        return { success: true };
+        try {
+          const { data } = await http.delete(ENDPOINTS.PROJECT.replace('{project_id}', projectId));
+          if (data.code !== 0) throw new Error(data.message || '删除项目失败');
+          return data.data;
+        } catch (err) {
+          console.warn('[Mock] 删除项目接口不可用，使用 mock 数据');
+          const idx = mockProjects.findIndex((p) => p.id === projectId);
+          if (idx < 0) throw new Error('项目不存在');
+          mockProjects.splice(idx, 1);
+          return { success: true };
+        }
       },
     };
   })(),

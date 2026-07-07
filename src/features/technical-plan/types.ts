@@ -13,12 +13,24 @@ export type ProjectStatus = 'draft' | 'in-progress' | 'completed' | 'archived';
 export interface Project {
   id: string;
   name: string;
-  status: ProjectStatus;
+  code: string;
+  owner_id: string;
+  status: string;
+  bid_deadline: string;
+  description: string;
   created_at: string;
   updated_at: string;
-  tender_file_name?: string;
-  outline_section_count?: number;
-  content_word_count?: number;
+}
+
+export interface ProjectListResponse {
+  items: Project[];
+  pagination: { page: number; page_size: number; total: number };
+}
+
+export interface CreateProjectPayload {
+  name: string;
+  bid_deadline?: string;
+  description?: string;
 }
 
 // ============== 投标分析任务 ==============

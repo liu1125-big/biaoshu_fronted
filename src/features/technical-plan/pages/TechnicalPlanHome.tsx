@@ -8,6 +8,7 @@ import BidAnalysisPage from './BidAnalysisPage';
 import OutlineEditPage from './OutlineEditPage';
 import ContentEditPage from './ContentEditPage';
 import { useTechnicalPlanWorkflow } from '../hooks/useTechnicalPlanWorkflow';
+import { useProject } from '../hooks/useProject';
 import { FloatingToolbar, ToolbarArrowLeftIcon, ToolbarArrowRightIcon, ToolbarDocumentIcon } from '../../../shared/ui';
 import type { TechnicalPlanStep } from '../types';
 
@@ -44,10 +45,11 @@ const mockOutlineData = {
   ],
 };
 
-function TechnicalPlanHome({ onBackToProjects }: TechnicalPlanHomeProps) {
+function TechnicalPlanHome({ projectId, onBackToProjects }: TechnicalPlanHomeProps) {
   useEffect(() => { document.title = '标书生成'; }, []);
 
   const { state, setState, switchStep } = useTechnicalPlanWorkflow();
+  const { project } = useProject(projectId || null);
   const [tenderMarkdown, setTenderMarkdown] = useState('');
   const [sections, setSections] = useState<Record<string, { content: string; status: string }>>({});
 
