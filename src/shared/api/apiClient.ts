@@ -379,4 +379,85 @@ export const apiClient = {
       },
     };
   })(),
+
+  // ============ Admin RBAC ============
+  admin: {
+    // 用户管理
+    users: {
+      list: async (params?: {
+        page?: number;
+        page_size?: number;
+        keyword?: string | null;
+        status?: string | null;
+        role?: string | null;
+        sort_by?: string | null;
+        sort_order?: 'asc' | 'desc';
+      }) => {
+        const searchParams = new URLSearchParams();
+        if (params?.page) searchParams.set('page', String(params.page));
+        if (params?.page_size) searchParams.set('page_size', String(params.page_size));
+        if (params?.keyword) searchParams.set('keyword', params.keyword);
+        if (params?.status) searchParams.set('status', params.status);
+        if (params?.role) searchParams.set('role', params.role);
+        if (params?.sort_by) searchParams.set('sort_by', params.sort_by);
+        if (params?.sort_order) searchParams.set('sort_order', params.sort_order);
+        const query = searchParams.toString();
+        const { data } = await http.get(`${ENDPOINTS.USERS}${query ? `?${query}` : ''}`);
+        if (data.code !== 0) throw new Error(data.message || '获取用户列表失败');
+        return data.data;
+      },
+      get: async (userId: string) => {
+        const { data } = await http.get(ENDPOINTS.USER_PROFILE.replace('{user_id}', userId));
+        if (data.code !== 0) throw new Error(data.message || '获取用户详情失败');
+        return data.data;
+      },
+    },
+
+    // 角色管理
+    roles: {
+      list: async (params?: {
+        page?: number;
+        page_size?: number;
+        keyword?: string | null;
+        status?: string | null;
+        sort_by?: string | null;
+        sort_order?: 'asc' | 'desc';
+      }) => {
+        const searchParams = new URLSearchParams();
+        if (params?.page) searchParams.set('page', String(params.page));
+        if (params?.page_size) searchParams.set('page_size', String(params.page_size));
+        if (params?.keyword) searchParams.set('keyword', params.keyword);
+        if (params?.status) searchParams.set('status', params.status);
+        if (params?.sort_by) searchParams.set('sort_by', params.sort_by);
+        if (params?.sort_order) searchParams.set('sort_order', params.sort_order);
+        const query = searchParams.toString();
+        const { data } = await http.get(`${ENDPOINTS.ROLES}${query ? `?${query}` : ''}`);
+        if (data.code !== 0) throw new Error(data.message || '获取角色列表失败');
+        return data.data;
+      },
+      get: async (roleId: string) => {
+        const { data } = await http.get(`${ENDPOINTS.ROLES}/${roleId}`);
+        if (data.code !== 0) throw new Error(data.message || '获取角色详情失败');
+        return data.data;
+      },
+    },
+
+    // 权限管理
+    permissions: {
+      list: async () => {
+        const { data } = await http.get(ENDPOINTS.PERMISSIONS);
+        if (data.code !== 0) throw new Error(data.message || '获取权限列表失败');
+        return data.data;
+      },
+    },
+
+    // 菜单管理
+    menus: {
+      tree: async () => {
+        const { data } = await http.get(ENDPOINTS.MENUS);
+        if (data.code !== 0) throw new Error(data.message || '获取菜单树失败');
+        return data.data;
+      },
+    },
+  },
 };

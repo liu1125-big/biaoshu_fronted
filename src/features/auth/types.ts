@@ -53,3 +53,56 @@ export interface ForgotPasswordFormData {
   newPassword: string;
   confirmNewPassword: string;
 }
+
+// ============ RBAC 类型定义 ============
+
+export interface UserRole {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+}
+
+export interface UserItem {
+  id: string;
+  username: string;
+  name?: string;
+  status: string;
+  roles: UserRole[];
+  last_login_at?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface PermissionItem {
+  id: string;
+  code: string;
+  name: string;
+  resource: string;
+  action: string;
+  description?: string;
+}
+
+export interface MenuItem {
+  id: string;
+  parent_id?: string;
+  name: string;
+  route?: string;
+  component?: string;
+  icon?: string;
+  sort_order: number;
+  visible: boolean;
+  permission_code?: string;
+  children?: MenuItem[];
+}
+
+export interface RoleItem {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+  permissions: PermissionItem[];
+  menus: MenuItem[];
+  created_at?: string;
+  updated_at?: string;
+}

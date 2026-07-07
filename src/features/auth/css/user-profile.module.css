@@ -1,397 +1,1394 @@
 /**
- * 用户管理页面样式
- * 现代清爽扁平化设计
+ * 用户与权限管理页面样式
+ * 政务系统风格 - 浅蓝 + 白 + 灰
+ * 高保真企业级后台 UI
  */
 
+/* ============ 页面容器 ============ */
 .page {
   width: 100%;
-  flex: 1;
-  min-height: 0;
-  padding: 32px 42px;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+  background: transparent;
+  padding: 0;
   box-sizing: border-box;
   overflow-y: auto;
 }
 
-/* 顶部标题栏 */
+.pageInner {
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
+}
+
+/* ============ 自定义滚动条 ============ */
+.page::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.page::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.page::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.page::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* ============ Header 胶囊卡片区域 ============ */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: 40px 40px;
-  background: white;
-  border-radius: 20px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  height: 64px;
+  box-sizing: border-box;
 }
 
+/* 左侧：蓝色小点 + 标题 */
 .headerLeft {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-.headerText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.headerKicker {
-  font-size: 12px;
-  font-weight: 500;
-  color: #94a3b8;
+.headerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1677ff;
 }
 
 .headerTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2d3d;
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: -0.01em;
 }
 
-.logoutBtn {
+/* 右侧按钮组 */
+.headerRight {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #ef4444;
-  background: #fef2f2;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.logoutBtn:hover {
-  background: #fee2e2;
-}
-
-.logoutBtn svg {
-  color: #ef4444;
-}
-
-/* 卡片容器 */
-.cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  flex: 1;
-  align-items: stretch;
-}
-
-@media (max-width: 900px) {
-  .cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .page {
-    padding: 16px 16px;
-  }
-
-  .header {
-    padding: 24px 20px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .headerRight {
-    width: 100%;
-  }
-
-  .logoutBtn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-.card {
-  background: white;
+/* 已登录胶囊 */
+.statusCapsule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
   border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
+  font-size: 13px;
+  font-weight: 500;
+  color: #52c41a;
 }
 
-/* 卡片头部 */
-.cardHeader {
-  display: flex;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
-  flex-shrink: 0;
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #52c41a;
 }
 
-.cardTitle {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-/* 区块标题 */
-.sectionTitle {
-  padding: 24px 28px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
-}
-
-/* 头像区域 */
-.profileSection {
+/* 胶囊按钮通用样式 */
+.capsuleBtn {
   display: flex;
   align-items: center;
-  gap: 28px;
-  margin: 28px 28px 0;
-  padding: 32px;
-  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-  border-radius: 12px;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
 }
 
-.avatarWrapper {
-  position: relative;
-  flex-shrink: 0;
+.capsuleBtn svg {
+  width: 14px;
+  height: 14px;
 }
 
-.avatar {
+/* 刷新数据胶囊 - 白底黑字 */
+.refreshCapsule {
+  background: #fff;
+  border-color: #e5e7eb;
+  color: #595959;
+}
+
+.refreshCapsule:hover {
+  border-color: #1677ff;
+  color: #1677ff;
+}
+
+/* 新建用户胶囊 - 蓝底白字 */
+.createCapsule {
+  background: #1677ff;
+  color: #fff;
+  border-color: #1677ff;
+}
+
+.createCapsule:hover {
+  background: #4096ff;
+}
+
+/* 用户下拉胶囊 - 白底 */
+.userCapsule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.userCapsule:hover {
+  border-color: #1677ff;
+}
+
+.userCapsuleAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5B7CFA 0%, #4F46E5 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  font-size: 32px;
-  font-weight: 700;
-  color: white;
-  background: linear-gradient(135deg, #5B7CFA 0%, #4F46E5 100%);
-  border-radius: 16px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.onlineDot {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
+.userCapsuleName {
+  font-size: 13px;
+  color: #262626;
+  font-weight: 500;
+}
+
+.userCapsuleIcon {
   width: 12px;
   height: 12px;
-  background: #22C55E;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
+  color: #8c8c8c;
+  flex-shrink: 0;
 }
 
-.profileInfo {
+/* 用户下拉容器 */
+.userDropdownWrapper {
+  position: relative;
+}
+
+/* 用户下拉菜单 */
+.userDropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 100%;
+  width: max-content;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(20, 40, 80, 0.1);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.userDropdownItem {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #262626;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.userDropdownItem:hover {
+  background: #f5f5f5;
+}
+
+.userDropdownItem.danger {
+  color: #ff4d4f;
+}
+
+.userDropdownItem.danger:hover {
+  background: #fff1f0;
+}
+
+.userDropdownItem svg {
+  width: 14px;
+  height: 14px;
+  color: #8c8c8c;
+}
+
+.userDropdownItem.danger svg {
+  color: #ff4d4f;
+}
+
+/* ============ 用户管理 Tab 内容区 ============ */
+.userManagementContent {
+  padding: 20px;
+}
+
+/* 用户管理标题行 */
+.userManagementHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EEF2F7;
+  margin-bottom: 16px;
+}
+
+.userManagementTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
+/* 查询区域 */
+.filterBar {
+  display: flex;
+  align-items: center;
   gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #EEF2F7;
+  margin-bottom: 0;
 }
 
-.userName {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
+.filterInputWrapper {
+  position: relative;
+  width: 240px;
 }
 
-.profileTags {
+.filterInput {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filterInput:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+.filterInput::placeholder {
+  color: #bfbfbf;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: #8c9aad;
+}
+
+.filterSelect {
+  width: 160px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #1677ff;
+}
+
+.filterActions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
-.profileTag {
-  display: inline-flex;
+.btnDefault {
+  display: flex;
   align-items: center;
+  gap: 4px;
   padding: 6px 14px;
   font-size: 13px;
-  font-weight: 600;
-  color: #6366f1;
-  background: white;
-  border-radius: 20px;
+  font-weight: 500;
+  color: #595959;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* 状态横幅 */
-.statusBanner {
+.btnDefault:hover {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+.btnQuery {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  margin: 20px 28px 0;
-  padding: 16px 20px;
-  background: #dcfce7;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #1677ff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnQuery:hover {
+  background: #4096ff;
+}
+
+/* 表格区域 */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8c9aad;
+  background: #F8FAFF;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #262626;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.table tbody tr {
+  height: 48px;
+  transition: background 0.15s;
+}
+
+.table tbody tr:hover {
+  background: #F5F9FF;
+}
+
+.tableActions {
+  display: flex;
+  gap: 6px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.actionBtn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.actionBtn.view {
+  background: #f5f5f5;
+  color: #595959;
+  border-color: #d9d9d9;
+}
+
+.actionBtn.edit {
+  background: #e6f4ff;
+  color: #1677ff;
+  border-color: #91caff;
+}
+
+.actionBtn.assign {
+  background: #fff7e6;
+  color: #fa8c16;
+  border-color: #ffbb55;
+}
+
+.actionBtn.delete {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border-color: #ffccc7;
+}
+
+.timeText {
+  font-size: 13px;
+  color: #8c9aad;
+}
+
+/* 状态标签 */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusEnabled {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  color: #fff;
+}
+
+.statusDisabled {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: #fff;
+}
+
+.statusFrozen {
+  background: linear-gradient(135deg, #faad14 0%, #ffc53d 100%);
+  color: #fff;
+}
+
+/* 角色标签 */
+.roleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* 管理员 - 紫色渐变 */
+.roleTagAdmin {
+  background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
+}
+
+/* 普通用户 - 蓝色渐变 */
+.roleTagUser {
+  background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%);
+}
+
+/* 操作员 - 青色渐变 */
+.roleTagOperator {
+  background: linear-gradient(135deg, #13c2c2 0%, #36cfc9 100%);
+}
+
+.roleMore {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #f5f5f5;
+  color: #8c8c8c;
+  cursor: pointer;
+}
+
+.roleMore:hover {
+  background: #e8e8e8;
+}
+
+/* 分页区域 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  margin-top: 0;
+  border-top: 1px solid #EEF2F7;
+}
+
+.paginationInfo {
+  font-size: 13px;
+  color: #8c9aad;
+}
+
+.paginationInfo strong {
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background: #1677ff;
+  border-color: #1677ff;
+  color: #fff;
+}
+
+/* ============ 统一管理卡片 ============ */
+.managementCard {
+  background: #fff;
+  border: 1px solid #e8e8e8;
   border-radius: 12px;
+  overflow: hidden;
+  min-height: calc(100vh - 64px - 80px);
+  display: flex;
+  flex-direction: column;
 }
 
-.statusBanner svg {
+/* Tab 导航 */
+.tabs {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fff;
+  gap: 4px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #595959;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.tab:hover {
+  color: #1677ff;
+}
+
+.tab svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 选中 Tab - 只有蓝色字体和蓝色底边框，背景保持白色 */
+.tabActive {
+  color: #1677ff;
+  border-bottom-color: #1677ff;
+  background: #fff;
+}
+
+/* 新建角色按钮 */
+.tabCreateBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #1677ff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rbacTabCreateBtn:hover {
+  background: #4096ff;
+}
+
+.rbacTabCreateBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tab 内容区 */
+.tabContent {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0;
+}
+
+.tabContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tabContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.tabContent::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.tabContent::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* ============ 角色管理 Tab ============ */
+.roleLayout {
+  display: flex;
+  gap: 0;
+  min-height: 480px;
+  background: #fff;
+}
+
+/* 左侧角色列表 */
+.roleListPanel {
+  width: 20%;
   flex-shrink: 0;
-  margin-top: 2px;
-  color: #16a34a;
+  border-right: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
 }
 
-.statusBanner > div {
+.roleListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.roleListTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.roleListCount {
+  font-size: 12px;
+  color: #8c9aad;
+}
+
+.roleListSearch {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.roleListSearchWrapper {
+  padding: 12px 16px;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.roleList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.roleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  height: 56px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.roleItem:hover {
+  background: #F5F9FF;
+}
+
+.roleItemActive {
+  background: #e6f4ff;
+  border-left: 3px solid #1677ff;
+}
+
+.roleItemInfo {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.bannerTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: #166534;
-}
-
-.bannerSubtitle {
+.roleItemName {
   font-size: 14px;
   font-weight: 500;
-  color: #15803d;
+  color: #1f1f1f;
 }
 
-/* 信息网格 */
-.infoGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 0 28px;
+.roleItemCode {
+  font-size: 12px;
+  color: #8c9aad;
 }
 
-.infoCard {
+.roleItemStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 右侧配置区 */
+.configPanel {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 20px 24px;
-  background: #f8fafc;
-  border-radius: 12px;
+  overflow: hidden;
 }
 
-.infoLabel {
-  font-size: 13px;
-  font-weight: 500;
-  color: #94a3b8;
+.configHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e8e8e8;
 }
 
-.infoValue {
+.configTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #1e293b;
+  color: #1f1f1f;
 }
 
-/* 快捷设置 */
-.settingGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-  padding: 0 28px 28px;
+.configActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
 }
 
-.settingItem {
+/* 保存配置按钮 - 白底黑字 */
+.btnSaveConfig {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSaveConfig:hover {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+.btnSaveConfig svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 保存修改按钮 - 菜单管理用 */
+.btnSave {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #1677ff;
+  border: 1px solid #1677ff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSave:hover {
+  background: #4096ff;
+}
+
+.btnSave svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 编辑角色按钮 - 白底黑字 */
+.btnEditRole {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnEditRole:hover {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+.btnEditRole svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btnEdit {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #595959;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnEdit:hover {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+.btnDanger {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: #ff4d4f;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnDanger:hover {
+  background: #ff7875;
+}
+
+/* 配置内容区 - 双栏结构 */
+.configContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.configLeft {
+  flex: 1.2;
+  padding: 16px;
+  border-right: 1px solid #e8e8e8;
+  overflow-y: auto;
+}
+
+.configRight {
+  flex: 0.8;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.configSection {
+  margin-bottom: 16px;
+}
+
+.configSectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #EEF2F7;
+}
+
+.configSectionTitleLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.configSectionTitle svg {
+  width: 16px;
+  height: 16px;
+  color: #1677ff;
+}
+
+.configSectionTitleRight {
+  font-size: 12px;
+  font-weight: 400;
+  color: #8c9aad;
+}
+
+/* 权限分组 */
+.permissionGroup {
+  margin-bottom: 12px;
+}
+
+.permissionGroupTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.permissionGroupTitle:hover {
+  background: #f0f0f0;
+}
+
+.permissionGroupToggle {
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.settingItem:hover {
-  border-color: #6366f1;
-  color: #6366f1;
-  background: #eef2ff;
-}
-
-.settingItem svg {
-  color: #94a3b8;
   flex-shrink: 0;
 }
 
-.settingItem:hover svg {
-  color: #6366f1;
+.permissionGroupToggle svg {
+  width: 12px;
+  height: 12px;
+  color: #8c8c8c;
+  transition: transform 0.2s;
 }
 
-/* 角色说明 */
-.roleDesc {
-  margin: 0 28px;
-  padding: 20px 24px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border-left: 3px solid #6366f1;
+.chevronDown {
+  transform: rotate(0deg);
 }
 
-.roleDesc p {
-  margin: 0;
+.chevronRight {
+  transform: rotate(-90deg);
+}
+
+.permissionGroupTitle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #1677ff;
+}
+
+.permissionList {
+  padding-left: 28px;
+  margin-top: 8px;
+}
+
+.permissionItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  height: 32px;
+  box-sizing: border-box;
+}
+
+.permissionItem input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #1677ff;
+}
+
+.permissionItemName {
+  flex: 1;
+  color: #262626;
+}
+
+.permissionItemCode {
+  font-size: 11px;
+  color: #9aa4b2;
+  font-family: Consolas, monospace;
+}
+
+/* 菜单权限树 */
+.menuTree {
+  user-select: none;
+}
+
+.menuTreeNode {
+  margin-bottom: 4px;
+}
+
+.menuTreeContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
   font-size: 14px;
-  line-height: 1.7;
-  color: #64748b;
+  transition: background 0.2s;
 }
 
-/* 权限管理按钮 */
-.permissionBtn {
-  margin-top: auto;
-  padding: 0 28px 28px;
+.menuTreeContent:hover {
+  background: #f5f6fa;
 }
 
-.btnPrimary {
+.menuTreeContentSelected {
+  background: #e6f4ff;
+}
+
+.menuTreeToggle {
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+
+.menuTreeToggle svg {
+  width: 12px;
+  height: 12px;
+  color: #8c8c8c;
+  transition: transform 0.2s;
+}
+
+.menuTreeCheckbox {
+  width: 14px;
+  height: 14px;
+  accent-color: #1677ff;
+}
+
+.menuTreeName {
+  flex: 1;
+  color: #262626;
+}
+
+.menuTreeRoute {
+  font-size: 12px;
+  color: #9aa4b2;
+  font-family: Consolas, monospace;
+}
+
+.menuTreeChildren {
+  padding-left: 18px;
+}
+
+/* ============ 权限总览 Tab ============ */
+.permissionOverviewContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.permissionOverviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.permissionOverviewSearch {
+  width: 280px;
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.permissionOverviewStat {
+  margin-left: auto;
+  font-size: 13px;
+  color: #8c9aad;
+}
+
+.permissionOverviewStat strong {
+  color: #262626;
+}
+
+.permissionOverviewActions {
+  display: flex;
   gap: 8px;
-  width: 100%;
-  padding: 16px 24px;
+}
+
+.permissionOverviewGroup {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.overviewGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f1f1f;
+}
+
+.overviewGroupHeader:hover {
+  background: #f0f0f0;
+}
+
+.overviewGroupToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+
+.overviewGroupToggle svg {
+  width: 12px;
+  height: 12px;
+  color: #8c8c8c;
+}
+
+.overviewGroupToggleExpanded {
+  transform: rotate(0deg);
+}
+
+.overviewGroupToggle:not(.overviewGroupToggleExpanded) {
+  transform: rotate(-90deg);
+}
+
+.overviewGroupCount {
+  margin-left: auto;
+  font-size: 12px;
+  color: #8c9aad;
+  font-weight: normal;
+}
+
+.overviewGroupList {
+  padding: 8px 16px;
+}
+
+.overviewGroupItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.overviewGroupItem:last-child {
+  border-bottom: none;
+}
+
+.overviewGroupItemName {
+  flex: 1;
+  color: #262626;
+}
+
+.overviewGroupItemAction {
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.overviewGroupItemCode {
+  font-size: 11px;
+  color: #9aa4b2;
+  font-family: Consolas, monospace;
+}
+
+/* ============ 菜单管理 Tab ============ */
+.menuManagementLayout {
+  display: flex;
+  gap: 16px;
+  min-height: 480px;
+}
+
+.menuTreePanel {
+  width: 320px;
+  flex-shrink: 0;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuTreePanelHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
   font-size: 14px;
   font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  border: none;
+  color: #1f1f1f;
+}
+
+.menuTreePanelContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.menuFormPanel {
+  flex: 1;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuFormPanelHeader {
+  padding: 12px 20px;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.menuFormPanelContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+.formSwitch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.switchTrack {
+  width: 44px;
+  height: 24px;
+  background: #d9d9d9;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  position: relative;
+  transition: background 0.2s;
 }
 
-.btnPrimary:hover {
-  opacity: 0.9;
+.switchTrackActive {
+  background: #1677ff;
 }
 
-.btnPrimary svg {
-  color: white;
+.switchThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.2s;
 }
 
-/* 弹窗输入框样式 - 去除左侧图标预留空间 */
-.dialogInput {
-  padding: 0 16px !important;
+.switchThumbActive {
+  left: 22px;
 }
 
-/* 输入框样式 */
-.input {
-  width: 100%;
-  height: 54px;
-  padding: 0 16px 0 48px;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--yb-text);
-  background: white;
-  border: 2px solid #dce3f0;
-  border-radius: 14px;
-  outline: none;
-  transition: all 0.2s ease;
+.switchLabel {
+  font-size: 13px;
+  color: #595959;
 }
 
-.input::placeholder {
-  color: #a0aec0;
-  font-weight: 400;
+/* ============ 加载/空状态 ============ */
+.loadingState,
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  color: #8c8c8c;
+  font-size: 13px;
 }
 
-.input:focus {
-  border-color: var(--yb-primary);
-  box-shadow: 0 0 0 4px rgba(33, 116, 253, 0.08);
+/* ============ 无数据符号 ============ */
+.noData {
+  color: #8c8c8c;
+  font-size: 13px;
 }

@@ -1,0 +1,805 @@
+/**
+ * RBAC 模块样式 - 政务系统风格
+ * 与项目现有风格保持一致
+ */
+
+/* ============ 页面基础布局 ============ */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f5f6fa;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.headerKicker {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 0;
+}
+
+/* ============ 主内容区 ============ */
+.content {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+/* ============ 卡片容器 ============ */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 0;
+}
+
+.cardBody {
+  padding: 20px;
+}
+
+/* ============ 筛选区 ============ */
+.filterBar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.filterInput {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 180px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filterInput:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 100px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.filterActions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* ============ 按钮 ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btnPrimary {
+  background: #1890ff;
+  color: #fff;
+  border-color: #1890ff;
+}
+
+.btnPrimary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.btnDefault {
+  background: #fff;
+  color: #595959;
+  border-color: #d9d9d9;
+}
+
+.btnDefault:hover {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+.btnDanger {
+  background: #ff4d4f;
+  color: #fff;
+  border-color: #ff4d4f;
+}
+
+.btnDanger:hover {
+  background: #ff7875;
+  border-color: #ff7875;
+}
+
+.btnLink {
+  background: transparent;
+  color: #1890ff;
+  border: none;
+  padding: 4px 8px;
+}
+
+.btnLink:hover {
+  color: #40a9ff;
+}
+
+.btnSmall {
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+/* ============ 表格 ============ */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8c8c8c;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #262626;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.table tbody tr:hover {
+  background: #f5f6fa;
+}
+
+.tableActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ============ 状态标签 ============ */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusEnabled {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.statusDisabled {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.statusFrozen {
+  background: #fff7e6;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+}
+
+/* ============ 角色标签 ============ */
+.roleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.roleMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  background: #f5f5f5;
+  color: #8c8c8c;
+  border: none;
+  cursor: pointer;
+}
+
+.roleMoreBtn:hover {
+  background: #e8e8e8;
+  color: #595959;
+}
+
+/* ============ 分页 ============ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.paginationInfo strong {
+  color: #262626;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageBtnActive {
+  background: #1890ff;
+  border-color: #1890ff;
+  color: #fff;
+}
+
+.pageBtnActive:hover:not(:disabled) {
+  background: #40a9ff;
+  border-color: #40a9ff;
+  color: #fff;
+}
+
+.pageSizeSelect {
+  padding: 4px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+
+/* ============ 加载/空状态 ============ */
+.loadingState,
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  color: #8c8c8c;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.emptyText {
+  font-size: 14px;
+}
+
+/* ============ 角色管理左右布局 ============ */
+.roleLayout {
+  display: flex;
+  gap: 16px;
+  height: calc(100vh - 180px);
+}
+
+.roleListPanel {
+  width: 280px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.roleListHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.roleListTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin-bottom: 8px;
+}
+
+.roleListSearch {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.roleList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.roleItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.roleItem:hover {
+  background: #f5f6fa;
+}
+
+.roleItemActive {
+  background: #e6f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+.roleItemName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f1f1f;
+  margin-bottom: 4px;
+}
+
+.roleItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+/* ============ 右侧配置区 ============ */
+.configPanel {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.configHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.configTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+/* ============ Tabs ============ */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fafafa;
+}
+
+.tab {
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #595959;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #1890ff;
+}
+
+.tabActive {
+  color: #1890ff;
+  border-bottom-color: #1890ff;
+  background: #fff;
+}
+
+.configContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+/* ============ 权限树 ============ */
+.permissionGroup {
+  margin-bottom: 16px;
+}
+
+.permissionGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.permissionGroupHeader:hover {
+  background: #f0f0f0;
+}
+
+.permissionList {
+  padding-left: 28px;
+  margin-top: 8px;
+}
+
+.permissionItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.permissionItemName {
+  flex: 1;
+  color: #262626;
+}
+
+.permissionItemCode {
+  font-size: 11px;
+  color: #8c8c8c;
+  font-family: Consolas, monospace;
+}
+
+/* ============ 菜单树 ============ */
+.menuTree {
+  padding: 0;
+}
+
+.menuTreeNode {
+  user-select: none;
+}
+
+.menuTreeContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.menuTreeContent:hover {
+  background: #f5f6fa;
+}
+
+.menuTreeContentSelected {
+  background: #e6f7ff;
+}
+
+.menuTreeToggle {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #8c8c8c;
+}
+
+.menuTreeName {
+  flex: 1;
+  color: #262626;
+}
+
+.menuTreeVisible {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.menuTreeVisibleTrue {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.menuTreeVisibleFalse {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.menuTreeChildren {
+  padding-left: 24px;
+}
+
+/* ============ 状态栏 ============ */
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 20px;
+  background: #fafafa;
+  border-top: 1px solid #e8e8e8;
+  font-size: 13px;
+  color: #8c8c8c;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusItem strong {
+  color: #262626;
+}
+
+.statusSaved {
+  color: #52c41a;
+}
+
+.statusUnsaved {
+  color: #fa8c16;
+}
+
+/* ============ 表单 ============ */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+/* ============ 权限总览 ============ */
+.permissionOverview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.permissionOverviewGroup {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.permissionOverviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f1f1f;
+}
+
+.permissionOverviewHeader:hover {
+  background: #f0f0f0;
+}
+
+.permissionOverviewToggle {
+  font-size: 10px;
+  color: #8c8c8c;
+  transition: transform 0.2s;
+}
+
+.permissionOverviewToggleExpanded {
+  transform: rotate(90deg);
+}
+
+.permissionOverviewCount {
+  margin-left: auto;
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: normal;
+}
+
+.permissionOverviewList {
+  padding: 8px 16px;
+}
+
+.permissionOverviewItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.permissionOverviewItem:last-child {
+  border-bottom: none;
+}
+
+.permissionOverviewName {
+  flex: 1;
+  color: #262626;
+}
+
+.permissionOverviewAction {
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.permissionOverviewCode {
+  font-size: 11px;
+  color: #8c8c8c;
+  font-family: Consolas, monospace;
+}
+
+/* ============ 搜索统计 ============ */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 280px;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.statInfo {
+  font-size: 14px;
+  color: #8c8c8c;
+  margin-left: auto;
+}
+
+.statInfo strong {
+  color: #262626;
+}
